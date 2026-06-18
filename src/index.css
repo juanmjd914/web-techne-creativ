@@ -279,8 +279,9 @@
     max-width: 100% !important;
   }
 
-  /* WhyUs — grid de 1 columna en móvil */
-  .why-outer-grid {
+  /* Grids de 2 columnas → 1 columna en móvil */
+  .why-outer-grid,
+  .responsive-grid {
     grid-template-columns: 1fr !important;
   }
   .why-inner-grid {

@@ -112,7 +112,7 @@ export function PorQueNosotros() {
 
       {/* About section */}
       <section style={{ padding: '80px 24px', background: '#fff' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 60, alignItems: 'center' }}>
+        <div className="responsive-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 60, alignItems: 'center' }}>
           <div>
             <p className="section-eyebrow">Quiénes somos</p>
             <h2 className="section-title" style={{ marginTop: 12, marginBottom: 20 }}>Una agencia con alma de startup y experiencia de empresa</h2>

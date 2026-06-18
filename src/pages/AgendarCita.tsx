@@ -126,7 +126,7 @@ export function AgendarCita() {
       </section>
 
       <section style={{ padding: '72px 24px' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 60, alignItems: 'flex-start' }}>
+        <div className="responsive-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 60, alignItems: 'flex-start' }}>
           {/* Info */}
           <div>
             <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--tc-text)', marginBottom: 8 }}>¿Qué pasa en la cita?</h2>
