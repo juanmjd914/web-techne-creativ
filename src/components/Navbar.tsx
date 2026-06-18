@@ -117,7 +117,7 @@ export function Navbar() {
               </li>
             ))}
             <li style={{ marginTop: 12 }}>
-              <Link to="/agendar-cita" className="btn-teal" style={{ width: '100%', justifyContent: 'center', fontSize: 14 }}>
+              <Link to="/agendar-cita" className="btn-teal mobile-cta" style={{ width: '100%', justifyContent: 'center', fontSize: 14 }}>
                 Agendar cita
               </Link>
             </li>

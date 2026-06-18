@@ -36,7 +36,7 @@ function Hero() {
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #0F2027, #203A43, #2C5364)', zIndex: -1 }} />
 
       {/* Content — anclado a la izquierda */}
-      <div style={{ position: 'relative', zIndex: 2, maxWidth: 1200, margin: '0 auto', padding: '0 24px 0 0', width: '100%' }}>
+      <div className="hero-content-wrap" style={{ position: 'relative', zIndex: 2, maxWidth: 1200, margin: '0 auto', padding: '0 24px 0 0', width: '100%' }}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -138,7 +138,7 @@ const WHY = [
 function WhyUs() {
   return (
     <section style={{ padding: '80px 24px' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(460px, 1fr))', gap: 48, alignItems: 'center' }}>
+      <div className="why-outer-grid" style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(460px, 1fr))', gap: 48, alignItems: 'center' }}>
         <div>
           <p className="section-eyebrow">¿Por qué elegirnos?</p>
           <h2 className="section-title" style={{ marginTop: 8, marginBottom: 16 }}>Tu éxito digital es nuestra prioridad</h2>
@@ -149,7 +149,7 @@ function WhyUs() {
             Conocer más <ArrowRight size={16} />
           </Link>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+        <div className="why-inner-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
           {WHY.map((w, i) => (
             <motion.div
               key={w.title}

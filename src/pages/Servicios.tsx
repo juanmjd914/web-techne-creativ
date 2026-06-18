@@ -217,6 +217,7 @@ export function Servicios() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.45 }}
+                className={p.highlight ? 'pkg-highlighted' : undefined}
                 style={{
                   background: p.highlight ? 'linear-gradient(135deg, #00BCD4, #0097A7)' : '#fff',
                   border: p.highlight ? 'none' : '1px solid var(--tc-border)',

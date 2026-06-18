@@ -269,5 +269,45 @@
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .cta-card { padding: 40px 24px; }
-  .section-title { font-size: clamp(24px, 6vw, 34px); }
+  .section-title { font-size: clamp(22px, 6vw, 34px); }
+
+  /* Hero — padding lateral en móvil */
+  .hero-content-wrap {
+    padding: 0 24px !important;
+  }
+  .hero-content-wrap > div {
+    max-width: 100% !important;
+  }
+
+  /* WhyUs — grid de 1 columna en móvil */
+  .why-outer-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .why-inner-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Packages — sin scale en móvil */
+  .pkg-highlighted {
+    transform: scale(1) !important;
+  }
+
+  /* Secciones — reducir padding vertical */
+  .section-pad {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+
+  /* Botones — ajuste de tamaño */
+  .btn-teal, .btn-outline, .btn-white, .btn-outline-white {
+    font-size: 13px;
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 420px) {
+  /* Feature cards en 1 columna en pantallas muy pequeñas */
+  .why-inner-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
