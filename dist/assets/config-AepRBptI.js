@@ -1,0 +1,1 @@
+const a="http://localhost:3001",e=["Páginas web corporativas","Páginas web para microempresas","Marketing digital integral","Gestión de redes sociales","Community management","Campañas Meta Ads","Catálogos inteligentes para WhatsApp","Consulta general"];export{a as A,e as S};
