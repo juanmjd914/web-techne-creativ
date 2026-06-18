@@ -1,0 +1,273 @@
+@import "tailwindcss";
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --tc-primary: #00BCD4;
+    --tc-primary-dark: #0097A7;
+    --tc-primary-light: #E0F7FA;
+    --tc-grad-start: #0BBEC8;
+    --tc-grad-end: #0CC4A0;
+    --tc-text: #111827;
+    --tc-muted: #6B7280;
+    --tc-border: #E5E7EB;
+    --tc-bg: #F9FAFB;
+    --tc-white: #FFFFFF;
+    --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    color: var(--tc-text);
+    background: var(--tc-white);
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  html {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  h1, h2, h3, h4 { font-family: var(--font); }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--tc-border); }
+  ::-webkit-scrollbar-thumb { background: var(--tc-primary); border-radius: 3px; }
+}
+
+/* ===== GLOBAL COMPONENTS ===== */
+
+.btn-teal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tc-primary);
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  letter-spacing: 0.01em;
+}
+.btn-teal:hover { background: var(--tc-primary-dark); transform: translateY(-1px); }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--tc-primary);
+  padding: 11px 28px;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1.5px solid var(--tc-primary);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  letter-spacing: 0.01em;
+}
+.btn-outline:hover { background: var(--tc-primary-light); transform: translateY(-1px); }
+
+.btn-white {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: var(--tc-primary-dark);
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-white:hover { background: #f0f0f0; transform: translateY(-1px); }
+
+.btn-outline-white {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #fff;
+  padding: 11px 28px;
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1.5px solid rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.12); border-color: #fff; }
+
+/* ===== SERVICE CARD ===== */
+.service-card {
+  background: var(--tc-white);
+  border: 1px solid var(--tc-border);
+  border-radius: 16px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.service-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); transform: translateY(-3px); }
+
+.service-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--tc-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tc-primary);
+  flex-shrink: 0;
+}
+
+.service-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+.service-features li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--tc-muted);
+}
+.service-features li::before {
+  content: '→';
+  color: var(--tc-primary);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ===== FEATURE CARD (por qué elegir) ===== */
+.feature-card {
+  background: var(--tc-bg);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===== STEP BADGE ===== */
+.step-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--tc-grad-start), var(--tc-grad-end));
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ===== CTA CARD ===== */
+.cta-card {
+  background: var(--tc-primary-light);
+  border-radius: 20px;
+  padding: 56px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ===== SECTION COMMONS ===== */
+.section-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tc-primary);
+}
+
+.section-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--tc-text);
+}
+
+.section-subtitle {
+  font-size: 15px;
+  color: var(--tc-muted);
+  line-height: 1.7;
+}
+
+/* ===== FAQ ===== */
+.faq-item {
+  border-bottom: 1px solid var(--tc-border);
+}
+.faq-item:first-child { border-top: 1px solid var(--tc-border); }
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tc-text);
+  transition: color 0.2s;
+}
+.faq-question:hover { color: var(--tc-primary); }
+.faq-answer {
+  font-size: 14px;
+  color: var(--tc-muted);
+  line-height: 1.75;
+  padding-bottom: 20px;
+}
+
+/* ===== FADE IN ANIMATION ===== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes tcBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .cta-card { padding: 40px 24px; }
+  .section-title { font-size: clamp(24px, 6vw, 34px); }
+}
