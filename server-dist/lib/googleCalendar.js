@@ -33,9 +33,9 @@ async function signJwt(payload, privateKeyPem) {
     const encode = (obj) => btoa(JSON.stringify(obj)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
     const toSign = `${encode(header)}.${encode(payload)}`;
     const pemBody = privateKeyPem
-        .replace(/-----BEGIN PRIVATE KEY-----/, '')
-        .replace(/-----END PRIVATE KEY-----/, '')
-        .replace(/\n/g, '');
+        .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+        .replace(/-----END PRIVATE KEY-----/g, '')
+        .replace(/[^A-Za-z0-9+/=]/g, '');
     const keyData = Uint8Array.from(atob(pemBody), c => c.charCodeAt(0));
     const cryptoKey = await crypto.subtle.importKey('pkcs8', keyData.buffer, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
     const signature = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', cryptoKey, new TextEncoder().encode(toSign));
