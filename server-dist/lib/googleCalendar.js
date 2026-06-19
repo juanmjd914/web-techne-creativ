@@ -1,10 +1,22 @@
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 function loadServiceAccount() {
-    const path = join(__dirname, '..', 'google-service-account.json');
-    return JSON.parse(readFileSync(path, 'utf-8'));
+    const candidates = [
+        join(process.cwd(), 'server', 'google-service-account.json'),
+        join(process.cwd(), 'google-service-account.json'),
+        join(__dirname, '..', 'google-service-account.json'),
+        join(__dirname, '..', '..', 'server', 'google-service-account.json'),
+    ];
+    for (const p of candidates) {
+        if (existsSync(p)) {
+            console.log('[gcal] Loading service account from:', p);
+            return JSON.parse(readFileSync(p, 'utf-8'));
+        }
+    }
+    console.error('[gcal] Service account not found. Tried:', candidates);
+    throw new Error('google-service-account.json not found. Check server logs for tried paths.');
 }
 export const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID ?? 'primary';
 // JWT signing for service account
