@@ -10,6 +10,15 @@ interface ServiceAccount {
 }
 
 function loadServiceAccount(): ServiceAccount {
+  // Primary: environment variables (recommended for production)
+  const clientEmail = process.env.GOOGLE_CLIENT_EMAIL
+  const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+  if (clientEmail && privateKey) {
+    console.log('[gcal] Loaded service account from env vars')
+    return { client_email: clientEmail, private_key: privateKey }
+  }
+
+  // Fallback: JSON file in multiple possible locations
   const candidates = [
     join(process.cwd(), 'server', 'google-service-account.json'),
     join(process.cwd(), 'google-service-account.json'),
@@ -18,12 +27,12 @@ function loadServiceAccount(): ServiceAccount {
   ]
   for (const p of candidates) {
     if (existsSync(p)) {
-      console.log('[gcal] Loading service account from:', p)
+      console.log('[gcal] Loaded service account from file:', p)
       return JSON.parse(readFileSync(p, 'utf-8'))
     }
   }
-  console.error('[gcal] Service account not found. Tried:', candidates)
-  throw new Error('google-service-account.json not found. Check server logs for tried paths.')
+  console.error('[gcal] Service account not found. cwd:', process.cwd(), '| Tried files:', candidates)
+  throw new Error('Google service account credentials not found. Set GOOGLE_CLIENT_EMAIL and GOOGLE_PRIVATE_KEY env vars.')
 }
 
 export const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID ?? 'primary'
