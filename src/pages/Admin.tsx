@@ -219,28 +219,50 @@ export function Admin() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F8FAFC' }}>
-      <header style={{ background: '#fff', borderBottom: '1px solid var(--tc-border)', padding: '0 24px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <style>{`
+        .adm-header { background:#fff; border-bottom:1px solid var(--tc-border); padding:0 24px; height:60px; display:flex; align-items:center; justify-content:space-between; }
+        .adm-actions { display:flex; align-items:center; gap:10px; }
+        .adm-username { font-size:13px; color:var(--tc-muted); display:flex; align-items:center; gap:5px; }
+        .adm-btn-label { display:inline; }
+        .adm-stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:32px; }
+        .adm-content { max-width:1200px; margin:0 auto; padding:32px 24px; }
+        .adm-appt-card { background:#fff; border:1px solid var(--tc-border); border-radius:12px; padding:20px; }
+        .adm-appt-body { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start; justify-content:space-between; }
+        .adm-appt-btns { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+        @media (max-width:640px) {
+          .adm-header { height:auto; padding:12px 16px; flex-wrap:wrap; gap:8px; }
+          .adm-username { display:none; }
+          .adm-btn-label { display:none; }
+          .adm-actions { gap:6px; }
+          .adm-stat-grid { grid-template-columns:repeat(2,1fr) !important; gap:10px; margin-bottom:20px; }
+          .adm-content { padding:16px 12px; }
+          .adm-appt-card { padding:14px; }
+          .adm-appt-btns { width:100%; margin-top:8px; }
+        }
+      `}</style>
+
+      <header className="adm-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <img src="/logo-dark.png" alt="Techne Creativ" style={{ height: 28 }} />
           <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--tc-text)' }}>Panel Admin</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div className="adm-actions">
           {username && (
-            <span style={{ fontSize: 13, color: 'var(--tc-muted)', display: 'flex', alignItems: 'center', gap: 5 }}>
+            <span className="adm-username">
               <User size={13} /> {username}
             </span>
           )}
-          <button onClick={loadData} style={{ background: 'none', border: '1px solid var(--tc-border)', borderRadius: 8, padding: '6px 14px', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: 'var(--tc-muted)', fontFamily: 'var(--font)' }}>
-            <RefreshCw size={14} /> Actualizar
+          <button onClick={loadData} style={{ background: 'none', border: '1px solid var(--tc-border)', borderRadius: 8, padding: '6px 12px', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: 'var(--tc-muted)', fontFamily: 'var(--font)' }}>
+            <RefreshCw size={14} /> <span className="adm-btn-label">Actualizar</span>
           </button>
-          <button onClick={doLogout} style={{ background: 'none', border: '1px solid #FCA5A5', borderRadius: 8, padding: '6px 14px', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: '#EF4444', fontFamily: 'var(--font)' }}>
-            <LogOut size={14} /> Cerrar sesión
+          <button onClick={doLogout} style={{ background: 'none', border: '1px solid #FCA5A5', borderRadius: 8, padding: '6px 12px', fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: '#EF4444', fontFamily: 'var(--font)' }}>
+            <LogOut size={14} /> <span className="adm-btn-label">Cerrar sesión</span>
           </button>
         </div>
       </header>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 32 }}>
+      <div className="adm-content">
+        <div className="adm-stat-grid">
           {[
             { label: 'Citas totales', value: appointments.length, icon: <Calendar size={18} />, color: '#00BCD4' },
             { label: 'Citas pendientes', value: appointments.filter(a => a.status === 'pendiente').length, icon: <Clock size={18} />, color: '#F59E0B' },
@@ -259,7 +281,7 @@ export function Admin() {
           ))}
         </div>
 
-        <div style={{ display: 'flex', gap: 4, marginBottom: 24 }}>
+        <div style={{ display: 'flex', gap: 4, marginBottom: 20 }}>
           {(['appointments', 'messages'] as const).map(t => (
             <button
               key={t}
@@ -281,8 +303,8 @@ export function Admin() {
                 No hay citas registradas aún.
               </div>
             ) : appointments.slice((apptPage - 1) * PAGE_SIZE, apptPage * PAGE_SIZE).map(a => (
-              <div key={a.id} style={{ background: '#fff', border: '1px solid var(--tc-border)', borderRadius: 12, padding: 20 }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-start', justifyContent: 'space-between' }}>
+              <div key={a.id} className="adm-appt-card">
+                <div className="adm-appt-body">
                   <div>
                     <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
                       <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--tc-text)' }}>{a.name}</span>
@@ -312,7 +334,7 @@ export function Admin() {
                       </div>
                     )}
                   </div>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <div className="adm-appt-btns">
                     {(['confirmado', 'cancelado', 'completado'] as const).map(s => (
                       <button
                         key={s}
@@ -415,3 +437,4 @@ export function Admin() {
     </div>
   )
 }
+
