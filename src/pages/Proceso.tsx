@@ -169,8 +169,8 @@ export function Proceso() {
             ))}
           </div>
           <div style={{ textAlign: 'center', marginTop: 32, display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link to="/agendar-cita" className="btn-teal">Empezar mi proyecto <ArrowRight size={16} /></Link>
-            <Link to="/contacto" className="btn-outline">Hacer una consulta</Link>
+            <a href="https://catalogo-techne-creativ.vercel.app" target="_blank" rel="noopener noreferrer" className="btn-teal">Ver portafolio <ArrowRight size={16} /></a>
+            <Link to="/agendar-cita" className="btn-outline">Empezar mi proyecto</Link>
           </div>
         </div>
       </section>
