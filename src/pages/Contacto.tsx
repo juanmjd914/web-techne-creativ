@@ -76,7 +76,7 @@ export function Contacto() {
               {[
                 { icon: <Mail size={18} />, label: 'Email', value: 'ventas@technecreativ.com', href: 'mailto:ventas@technecreativ.com' },
                 { icon: <Phone size={18} />, label: 'WhatsApp Chile', value: '+56 9 6517 4454', href: 'https://wa.me/56965174454' },
-                { icon: <Phone size={18} />, label: 'WhatsApp Venezuela', value: '+58 412 476 0407', href: 'https://wa.me/584124760407' },
+                { icon: <Phone size={18} />, label: 'WhatsApp Venezuela', value: '+58 424 651 5707', href: 'https://wa.me/584246515707' },
                 { icon: <MapPin size={18} />, label: 'Sede Chile', value: 'Rancagua, Región de O\'Higgins, Chile', href: undefined },
                 { icon: <MapPin size={18} />, label: 'Sede Venezuela', value: 'Barquisimeto, Estado Lara, Venezuela', href: undefined },
               ].map(c => (

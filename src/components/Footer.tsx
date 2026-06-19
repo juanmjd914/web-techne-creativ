@@ -64,7 +64,7 @@ export function Footer() {
             {[
               { icon: <Mail size={14} />, text: 'ventas@technecreativ.com', href: 'mailto:ventas@technecreativ.com' },
               { icon: <Phone size={14} />, text: '+56 9 6517 4454 (Chile)', href: 'https://wa.me/56965174454' },
-              { icon: <Phone size={14} />, text: '+58 412 476 0407 (Venezuela)', href: 'https://wa.me/584124760407' },
+              { icon: <Phone size={14} />, text: '+58 424 651 5707 (Venezuela)', href: 'https://wa.me/584246515707' },
               { icon: <MapPin size={14} />, text: 'Rancagua, O\'Higgins, Chile' },
             ].map((c, i) => (
               <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>

@@ -1,5 +1,5 @@
 export const WA_CHILE = 'https://wa.me/56965174454'
-export const WA_VE = 'https://wa.me/584124760407'
+export const WA_VE = 'https://wa.me/584246515707'
 export const EMAIL = 'ventas@technecreativ.com'
 export const PHONE = '+(56) 9 6517 4454'
 

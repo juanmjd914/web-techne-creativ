@@ -14,7 +14,7 @@ const SERVICES = [
   },
   {
     icon: <ShoppingCart size={24} />,
-    title: 'Tiendas Online / E-commerce',
+    title: 'Tiendas Online',
     desc: 'Plataformas de venta online completas con carrito, pagos seguros y gestión de inventario.',
     features: ['Catálogo de hasta 20 productos iniciales', 'Integración con pasarelas de pago', 'Panel de administración de pedidos', 'Sistema de cupones y descuentos', 'Notificaciones automáticas al cliente'],
     from: 'Desde $500.000 CLP',
@@ -28,9 +28,9 @@ const SERVICES = [
   },
   {
     icon: <Sparkles size={24} />,
-    title: 'Catálogos Digitales con IA',
-    desc: 'Catálogos web interactivos con descripciones y contenido generado con inteligencia artificial adaptado a tu marca.',
-    features: ['Contenido redactado con IA y revisado por expertos', 'Diseño web interactivo con filtros por categoría', 'Fotografías de productos con edición básica', 'Integración de botón de pedido por WhatsApp', 'Actualización semestral del contenido incluida'],
+    title: 'Catálogos Digitales',
+    desc: 'Catálogos web interactivos con descripciones y contenido personalizado adaptado a tu marca.',
+    features: ['Contenido redactado a tus necesidades y revisado por expertos', 'Diseño web interactivo con filtros por categoría', 'Fotografías de productos con edición básica', 'Integración de botón de pedido por WhatsApp', 'Actualización semestral del contenido'],
     from: 'Desde $180.000 CLP',
   },
   {
@@ -44,7 +44,7 @@ const SERVICES = [
     icon: <Share2 size={24} />,
     title: 'Community Management',
     desc: 'Gestión profesional de tus redes sociales con contenido estratégico y diseño de calidad.',
-    features: ['Calendario editorial mensual', 'Diseño de publicaciones en Canva', 'Publicación en 2-3 redes sociales', 'Respuesta a comentarios y mensajes', 'Reporte mensual de resultados'],
+    features: ['Calendario editorial mensual', 'Diseño de publicaciones', 'Publicación en 2-3 redes sociales', 'Respuesta a comentarios y mensajes', 'Reporte mensual de resultados'],
     from: 'Desde $120.000 CLP/mes',
   },
   {
@@ -58,7 +58,7 @@ const SERVICES = [
     icon: <BookOpen size={24} />,
     title: 'Catálogos Digitales para WhatsApp',
     desc: 'Catálogos interactivos que tus clientes pueden ver y compartir fácilmente desde WhatsApp.',
-    features: ['Diseño personalizado con tu marca', 'Formato PDF o link web interactivo', 'Hasta 50 productos con foto y precio', 'Botón directo a WhatsApp para pedir', 'Actualización trimestral incluida'],
+    features: ['Diseño personalizado con tu marca', 'Formato PDF o link web interactivo', 'Hasta 50 productos con foto y precio', 'Botón directo a WhatsApp para pedir', 'Actualización trimestral'],
     from: 'Desde $80.000 CLP',
   },
   {
@@ -94,7 +94,7 @@ const PACKAGES = [
     name: 'Menú Digital Premium',
     price: '$400.000',
     period: '',
-    desc: 'Menú interactivo con QR, panel admin y opcionalmente IA para generar descripciones.',
+    desc: 'Menú interactivo con QR, panel admin e IA integrada para generar descripciones.',
     features: [
       'Menú con categorías y filtros',
       '30 productos con fotos, descripción y precios',
@@ -102,7 +102,7 @@ const PACKAGES = [
       'Panel admin para editar productos',
       'Código QR incluido',
       'Integración con WhatsApp para pedidos',
-      'Opcional: IA para descripciones de productos',
+      'IA integrada para generar descripciones de productos',
       'Botones de redes sociales',
       '100% responsive (móvil y escritorio)',
       'Entrega en 10–15 días',
