@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { contactRouter } from './routes/contact.js';
 import { appointmentsRouter } from './routes/appointments.js';
 import { adminRouter } from './routes/admin.js';
+import { briefRouter } from './routes/brief.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -27,10 +28,20 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/appointments', apiLimiter);
 app.use('/api/contact', apiLimiter);
+// El brief guarda una respuesta por cada pregunta (~25 llamadas en una sola sesión) — necesita un límite más alto que appointments/contact.
+const briefLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Demasiadas solicitudes. Intenta de nuevo en 15 minutos.' },
+});
+app.use('/api/brief', briefLimiter);
 // API routes
 app.use('/api/contact', contactRouter);
 app.use('/api/appointments', appointmentsRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/brief', briefRouter);
 // Health check
 app.get('/api/salud', (_req, res) => res.json({ ok: true, env: process.env.NODE_ENV }));
 // OAuth helper (solo desarrollo — generar refresh token)

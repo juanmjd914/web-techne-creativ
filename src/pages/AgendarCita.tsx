@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { CalendarCheck, CheckCircle, Clock, Video } from 'lucide-react'
-import { API_URL, SERVICES_FOR_BOOKING } from '../lib/config'
+import { API_URL, BRIEF_FORM_URL, SERVICES_FOR_BOOKING } from '../lib/config'
 import { SEOHead } from '../components/SEOHead'
 
 interface FormState {
@@ -11,10 +11,9 @@ interface FormState {
   service: string
   date: string
   time: string
-  message: string
 }
 
-const INIT: FormState = { name: '', email: '', whatsapp: '', service: '', date: '', time: '', message: '' }
+const INIT: FormState = { name: '', email: '', whatsapp: '', service: '', date: '', time: '' }
 
 const SLOTS_WEEKDAY = [
   '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
@@ -49,6 +48,8 @@ export function AgendarCita() {
   const [form, setForm] = useState<FormState>(INIT)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [err, setErr] = useState('')
+  const [nombreConfirmado, setNombreConfirmado] = useState('')
+  const [citaId, setCitaId] = useState<string | null>(null)
 
   const set = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const val = e.target.value
@@ -75,6 +76,9 @@ export function AgendarCita() {
         body: JSON.stringify(form),
       })
       if (!res.ok) throw new Error('Error')
+      const data = await res.json()
+      setCitaId(data.id ?? null)
+      setNombreConfirmado(form.name)
       setStatus('success')
       setForm(INIT)
     } catch {
@@ -125,6 +129,26 @@ export function AgendarCita() {
         </div>
       </section>
 
+      {status === 'success' && citaId ? (
+        <section style={{ padding: '56px 24px 88px' }}>
+          <div style={{ maxWidth: 640, margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', marginBottom: 28 }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <CalendarCheck size={32} style={{ color: '#22C55E' }} />
+              </div>
+              <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--tc-text)', marginBottom: 8 }}>¡Cita agendada!</h2>
+              <p style={{ fontSize: 14, color: 'var(--tc-muted)', lineHeight: 1.7 }}>
+                Te enviaremos un correo de confirmación y te escribiremos por WhatsApp para confirmar los detalles de la reunión.
+              </p>
+            </div>
+            <iframe
+              src={`${BRIEF_FORM_URL}/?cita=${encodeURIComponent(citaId)}&nombre=${encodeURIComponent(nombreConfirmado)}`}
+              title="Cuéntanos sobre tu proyecto"
+              style={{ width: '100%', height: 720, border: '1px solid var(--tc-border)', borderRadius: 20, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}
+            />
+          </div>
+        </section>
+      ) : (
       <section style={{ padding: '72px 24px' }}>
         <div className="responsive-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 60, alignItems: 'flex-start' }}>
           {/* Info */}
@@ -168,20 +192,6 @@ export function AgendarCita() {
             transition={{ duration: 0.5, delay: 0.15 }}
             style={{ background: '#fff', border: '1px solid var(--tc-border)', borderRadius: 20, padding: 36, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}
           >
-            {status === 'success' ? (
-              <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-                <div style={{ width: 72, height: 72, borderRadius: '50%', background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                  <CalendarCheck size={36} style={{ color: '#22C55E' }} />
-                </div>
-                <h3 style={{ fontSize: 22, fontWeight: 800, color: 'var(--tc-text)', marginBottom: 10 }}>¡Cita agendada!</h3>
-                <p style={{ fontSize: 14, color: 'var(--tc-muted)', lineHeight: 1.7, marginBottom: 20 }}>
-                  Te enviaremos un correo de confirmación y te escribiremos por WhatsApp para confirmar los detalles de la reunión.
-                </p>
-                <button onClick={() => setStatus('idle')} className="btn-outline" style={{ margin: '0 auto' }}>
-                  Agendar otra cita
-                </button>
-              </div>
-            ) : (
               <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--tc-text)', margin: 0, marginBottom: 4 }}>Reservar cita gratuita</h3>
                 {[
@@ -233,18 +243,6 @@ export function AgendarCita() {
                     </select>
                   </div>
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Cuéntanos brevemente sobre tu negocio</label>
-                  <textarea
-                    value={form.message}
-                    onChange={set('message')}
-                    placeholder="Tipo de negocio, qué producto o servicio ofreces, qué necesitas..."
-                    rows={3}
-                    style={{ ...inputStyle, resize: 'vertical' }}
-                    onFocus={e => (e.target.style.borderColor = 'var(--tc-primary)')}
-                    onBlur={e => (e.target.style.borderColor = 'var(--tc-border)')}
-                  />
-                </div>
                 {err && <p style={{ fontSize: 13, color: '#DC2626', margin: 0 }}>{err}</p>}
                 <button type="submit" className="btn-teal" disabled={status === 'loading'} style={{ justifyContent: 'center' }}>
                   {status === 'loading' ? 'Agendando...' : <><CalendarCheck size={16} /> Agendar cita gratis</>}
@@ -253,10 +251,10 @@ export function AgendarCita() {
                   Confirmaremos tu cita en menos de 24 horas por email y WhatsApp.
                 </p>
               </form>
-            )}
           </motion.div>
         </div>
       </section>
+      )}
     </main>
   )
 }

@@ -4,6 +4,7 @@ export const EMAIL = 'ventas@technecreativ.com'
 export const PHONE = '+(56) 9 6517 4454'
 
 export const API_URL = import.meta.env.VITE_API_URL ?? ''
+export const BRIEF_FORM_URL = import.meta.env.VITE_BRIEF_FORM_URL ?? ''
 
 export const SERVICES_FOR_BOOKING = [
   'Páginas web corporativas',

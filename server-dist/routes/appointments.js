@@ -33,10 +33,10 @@ appointmentsRouter.post('/', async (req, res) => {
         return;
     }
     try {
-        const { error: dbErr } = await supabase.from('appointments').insert({
+        const { data: inserted, error: dbErr } = await supabase.from('appointments').insert({
             name, email, whatsapp, service, date, time,
             message: message || null, status: 'pendiente',
-        });
+        }).select('id').single();
         if (dbErr)
             throw dbErr;
         const emailAdmin = resend.emails.send({
@@ -74,7 +74,7 @@ appointmentsRouter.post('/', async (req, res) => {
       `,
         });
         Promise.all([emailAdmin, emailCliente]).catch(e => console.error('[appointments email]', e));
-        res.json({ ok: true });
+        res.json({ ok: true, id: inserted.id });
     }
     catch (e) {
         console.error('[appointments]', e);
