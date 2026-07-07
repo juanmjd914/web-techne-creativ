@@ -7,8 +7,14 @@ export const API_URL = import.meta.env.VITE_API_URL ?? ''
 export const BRIEF_FORM_URL = import.meta.env.VITE_BRIEF_FORM_URL ?? ''
 
 export const SERVICES_FOR_BOOKING = [
+  'Landing Page Básica',
+  'Landing Page Premium',
   'Páginas web corporativas',
-  'Páginas web para microempresas',
+  'Menú Digital Básico',
+  'Menú Digital Premium',
+  'Sistema de Citas Online',
+  'E-commerce Básico',
+  'E-commerce Completo',
   'Marketing digital integral',
   'Gestión de redes sociales',
   'Community management',

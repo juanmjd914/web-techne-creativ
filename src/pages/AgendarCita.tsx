@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { CalendarCheck, CheckCircle, Clock, Video } from 'lucide-react'
 import { API_URL, BRIEF_FORM_URL, SERVICES_FOR_BOOKING } from '../lib/config'
@@ -64,6 +64,16 @@ export function AgendarCita() {
 
   const availableSlots = getSlotsForDate(form.date)
   const isDaySunday = getDayOfWeek(form.date) === 0
+
+  // Cuando el cliente termina el brief, el iframe avisa con postMessage y llevamos al inicio
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (!BRIEF_FORM_URL || !BRIEF_FORM_URL.startsWith(e.origin)) return
+      if (e.data?.type === 'brief_completado') window.location.assign('/')
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [])
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
