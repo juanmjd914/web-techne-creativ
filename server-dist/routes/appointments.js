@@ -11,6 +11,80 @@ function isValidEmail(email) {
 function isValidPhone(phone) {
     return phone.replace(/\D/g, '').length >= 7;
 }
+// Perfiles del CRM para asignación automática según prefijo del WhatsApp
+const PROFILE_SIMON = '2f489d11-ac85-45ea-a354-f4d1fcb7ea7a'; // smejiasdaza — Chile (56)
+const PROFILE_JUAN_CARLOS = '7469449c-3041-4d41-b5d1-29ece7d8aba8'; // jmejiasdaza — Venezuela (58)
+/**
+ * Crea (o actualiza) el prospecto en el CRM cuando alguien agenda una cita.
+ * - Deduplica por número de WhatsApp (comparando solo dígitos).
+ * - Existente: avanza stage a "Reunión" (salvo Ganado), anota la cita y reactiva si estaba Perdido.
+ * - Nuevo: entra en "Reunión", asignado según prefijo (56→Simón, 58→Juan Carlos, sin prefijo→sin asignar).
+ * - También registra la cita en el módulo Citas del CRM, vinculada al prospecto.
+ * Nunca lanza: si algo falla, la cita ya quedó guardada y solo se loguea el error.
+ */
+async function sincronizarProspectoCRM(appt) {
+    try {
+        const digits = appt.whatsapp.replace(/\D/g, '');
+        const nota = `📅 Agendó cita por la web — ${appt.service} · ${appt.date} ${appt.time}`;
+        let assignedTo = null;
+        if (digits.startsWith('56'))
+            assignedTo = PROFILE_SIMON;
+        else if (digits.startsWith('58'))
+            assignedTo = PROFILE_JUAN_CARLOS;
+        // Buscar prospecto existente por WhatsApp (solo dígitos, para tolerar formatos distintos)
+        const { data: candidatos, error: qErr } = await supabase
+            .from('prospectos')
+            .select('id, whatsapp, stage, notas, assigned_to')
+            .not('whatsapp', 'is', null);
+        if (qErr)
+            throw qErr;
+        const existente = (candidatos ?? []).find(p => String(p.whatsapp).replace(/\D/g, '') === digits);
+        let prospectoId;
+        if (existente) {
+            const updates = {
+                notas: existente.notas ? `${existente.notas}\n${nota}` : nota,
+            };
+            if (existente.stage !== 'Ganado') {
+                updates.stage = 'Reunión';
+                updates.perdido_at = null;
+            }
+            if (!existente.assigned_to && assignedTo)
+                updates.assigned_to = assignedTo;
+            const { error: upErr } = await supabase.from('prospectos').update(updates).eq('id', existente.id);
+            if (upErr)
+                throw upErr;
+            prospectoId = existente.id;
+        }
+        else {
+            const { data: nuevo, error: insErr } = await supabase.from('prospectos').insert({
+                nombre_negocio: appt.name,
+                contacto: appt.name,
+                whatsapp: appt.whatsapp,
+                email: appt.email,
+                stage: 'Reunión',
+                notas: nota,
+                assigned_to: assignedTo,
+            }).select('id').single();
+            if (insErr)
+                throw insErr;
+            prospectoId = nuevo.id;
+        }
+        // Vincular la cita web al prospecto y reflejarla en el módulo Citas del CRM
+        await supabase.from('appointments').update({ prospecto_id: prospectoId }).eq('id', appt.id);
+        await supabase.from('citas').insert({
+            prospecto_id: prospectoId,
+            titulo: `Cita web — ${appt.service}`,
+            fecha: appt.date,
+            hora: appt.time,
+            estado: 'Pendiente',
+            assigned_to: assignedTo,
+            notas: 'Agendada desde technecreativ.com/agendar-cita',
+        });
+    }
+    catch (e) {
+        console.error('[appointments → CRM]', e);
+    }
+}
 appointmentsRouter.post('/', async (req, res) => {
     const raw = req.body;
     const name = stripHtml(String(raw.name ?? ''));
@@ -39,6 +113,9 @@ appointmentsRouter.post('/', async (req, res) => {
         }).select('id').single();
         if (dbErr)
             throw dbErr;
+        // Sincronizar con el CRM en segundo plano (no bloquea la respuesta al cliente)
+        sincronizarProspectoCRM({ id: inserted.id, name, email, whatsapp, service, date, time })
+            .catch(e => console.error('[appointments → CRM]', e));
         const emailAdmin = resend.emails.send({
             from: FROM,
             to: ADMIN_EMAIL,
