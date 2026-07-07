@@ -39,6 +39,19 @@ briefRouter.post('/', async (req, res) => {
     if (Array.isArray(servicios)) {
         update.servicios_solicitados = servicios.filter((v) => typeof v === 'string' && SERVICIOS_VALIDOS.includes(v));
     }
+    // Detalle legible (bloque + pregunta + respuesta) que envía el formulario — el admin lo
+    // muestra tal cual, sin duplicar la lista de preguntas en este proyecto.
+    if (Array.isArray(raw.detalle)) {
+        update.detalle = raw.detalle
+            .slice(0, 60)
+            .filter((item) => typeof item === 'object' && item !== null && !Array.isArray(item))
+            .map(item => ({
+            bloque: stripHtml(String(item.bloque ?? '')).slice(0, 200),
+            pregunta: stripHtml(String(item.pregunta ?? '')).slice(0, 500),
+            respuesta: stripHtml(String(item.respuesta ?? '')).slice(0, 4000),
+        }))
+            .filter(item => item.pregunta && item.respuesta);
+    }
     update.completado = raw.completado === true;
     try {
         // El appointment_id debe corresponder a una cita real (evita poblar la tabla con filas arbitrarias)

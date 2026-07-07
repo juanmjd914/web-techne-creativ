@@ -146,6 +146,29 @@ adminRouter.patch('/messages/:id', async (req: Request, res: Response) => {
   res.json({ ok: true })
 })
 
+// Estado del brief de todas las citas (para las etiquetas de la lista): appointment_id → completado
+adminRouter.get('/briefs', async (req: Request, res: Response) => {
+  if (!checkSession(tokenFrom(req))) { res.status(401).json({ error: 'No autorizado' }); return }
+  const { data, error } = await supabase
+    .from('brief_respuestas')
+    .select('appointment_id, completado')
+  if (error) { res.status(500).json({ error: 'Error DB' }); return }
+  res.json(data)
+})
+
+// Detalle completo del brief de una cita
+adminRouter.get('/brief/:appointmentId', async (req: Request, res: Response) => {
+  if (!checkSession(tokenFrom(req))) { res.status(401).json({ error: 'No autorizado' }); return }
+  const { data, error } = await supabase
+    .from('brief_respuestas')
+    .select('appointment_id, completado, detalle, created_at, updated_at')
+    .eq('appointment_id', req.params.appointmentId)
+    .maybeSingle()
+  if (error) { res.status(500).json({ error: 'Error DB' }); return }
+  if (!data) { res.status(404).json({ error: 'Brief no encontrado' }); return }
+  res.json(data)
+})
+
 adminRouter.get('/messages', async (req: Request, res: Response) => {
   if (!checkSession(tokenFrom(req))) { res.status(401).json({ error: 'No autorizado' }); return }
   const { data, error } = await supabase

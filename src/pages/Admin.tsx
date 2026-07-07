@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { LogIn, Calendar, MessageSquare, CheckCircle, Clock, XCircle, RefreshCw, LogOut, Trash2, MailOpen, Mail, CalendarPlus, User, Eye, EyeOff } from 'lucide-react'
+import { LogIn, Calendar, MessageSquare, CheckCircle, Clock, XCircle, RefreshCw, LogOut, Trash2, MailOpen, Mail, CalendarPlus, User, Eye, EyeOff, FileText, Download, X } from 'lucide-react'
 import { API_URL } from '../lib/config'
 
 interface Appointment {
@@ -15,6 +15,20 @@ interface Appointment {
   created_at: string
   calendar_event_link?: string
   meet_link?: string
+}
+
+interface DetalleItem {
+  bloque: string
+  pregunta: string
+  respuesta: string
+}
+
+interface BriefDetail {
+  appointment_id: string
+  completado: boolean
+  detalle: DetalleItem[] | null
+  created_at: string
+  updated_at: string
 }
 
 interface ContactMsg {
@@ -54,6 +68,10 @@ export function Admin() {
   const [deleting, setDeleting] = useState<string | null>(null)
   const [apptPage, setApptPage] = useState(1)
   const [msgPage, setMsgPage] = useState(1)
+  // appointment_id → completado (true/false). Si una cita no está aquí, no tiene brief.
+  const [briefs, setBriefs] = useState<Record<string, boolean>>({})
+  const [briefModal, setBriefModal] = useState<{ appt: Appointment; brief: BriefDetail } | null>(null)
+  const [briefLoading, setBriefLoading] = useState<string | null>(null)
   const PAGE_SIZE = 10
 
   const doLogin = async (e: React.FormEvent) => {
@@ -94,13 +112,20 @@ export function Admin() {
   const loadData = async () => {
     setLoading(true)
     try {
-      const [aRes, mRes] = await Promise.all([
+      const [aRes, mRes, bRes] = await Promise.all([
         fetch(`${API_URL}/api/admin/appointments`, { headers: authHeaders(token) }),
         fetch(`${API_URL}/api/admin/messages`, { headers: authHeaders(token) }),
+        fetch(`${API_URL}/api/admin/briefs`, { headers: authHeaders(token) }),
       ])
       if (aRes.status === 401) { doLogout(); return }
       if (aRes.ok) setAppointments(await aRes.json())
       if (mRes.ok) setMessages(await mRes.json())
+      if (bRes.ok) {
+        const rows: { appointment_id: string; completado: boolean }[] = await bRes.json()
+        const map: Record<string, boolean> = {}
+        rows.forEach(r => { map[r.appointment_id] = r.completado })
+        setBriefs(map)
+      }
     } finally {
       setLoading(false)
     }
@@ -151,6 +176,86 @@ export function Admin() {
     } else {
       alert('Error al crear evento en Google Calendar')
     }
+  }
+
+  const openBrief = async (appt: Appointment) => {
+    setBriefLoading(appt.id)
+    try {
+      const res = await fetch(`${API_URL}/api/admin/brief/${appt.id}`, { headers: authHeaders(token) })
+      if (!res.ok) { alert('No se pudo cargar el brief'); return }
+      const brief: BriefDetail = await res.json()
+      setBriefModal({ appt, brief })
+    } catch {
+      alert('Error de conexión al cargar el brief')
+    } finally {
+      setBriefLoading(null)
+    }
+  }
+
+  const downloadBriefPdf = async () => {
+    if (!briefModal) return
+    const { appt, brief } = briefModal
+    const { jsPDF } = await import('jspdf')
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+
+    const marginX = 56
+    const maxWidth = 595 - marginX * 2
+    let y = 64
+
+    const ensureSpace = (needed: number) => {
+      if (y + needed > 780) { doc.addPage(); y = 64 }
+    }
+
+    // Encabezado
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(18)
+    doc.setTextColor(17, 24, 39)
+    doc.text('Brief del proyecto', marginX, y)
+    y += 24
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(11)
+    doc.setTextColor(107, 114, 128)
+    doc.text(`Cliente: ${appt.name}`, marginX, y); y += 16
+    doc.text(`Cita: ${appt.date} ${appt.time} · ${appt.service}`, marginX, y); y += 16
+    doc.text(`Estado del brief: ${brief.completado ? 'Completo' : 'Incompleto'}`, marginX, y); y += 12
+
+    doc.setDrawColor(229, 231, 235)
+    doc.line(marginX, y + 8, 595 - marginX, y + 8)
+    y += 32
+
+    let bloqueActual = ''
+    for (const item of brief.detalle ?? []) {
+      if (item.bloque !== bloqueActual) {
+        bloqueActual = item.bloque
+        ensureSpace(40)
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(13)
+        doc.setTextColor(0, 151, 167)
+        doc.text(bloqueActual, marginX, y)
+        y += 20
+      }
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(10.5)
+      doc.setTextColor(17, 24, 39)
+      const pregLines = doc.splitTextToSize(item.pregunta, maxWidth)
+      ensureSpace(pregLines.length * 14 + 8)
+      doc.text(pregLines, marginX, y)
+      y += pregLines.length * 14 + 4
+
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(10.5)
+      doc.setTextColor(75, 85, 99)
+      const respLines = doc.splitTextToSize(item.respuesta, maxWidth)
+      for (const line of respLines) {
+        ensureSpace(14)
+        doc.text(line, marginX, y)
+        y += 14
+      }
+      y += 12
+    }
+
+    doc.save(`brief-${appt.name.replace(/\s+/g, '-').toLowerCase()}.pdf`)
   }
 
   const toggleRead = async (id: string, currentRead: boolean) => {
@@ -311,6 +416,21 @@ export function Admin() {
                       <span style={{ fontSize: 12, fontWeight: 600, padding: '2px 10px', borderRadius: 12, background: `${STATUS_COLORS[a.status] ?? '#6B7280'}22`, color: STATUS_COLORS[a.status] ?? '#6B7280' }}>
                         {a.status}
                       </span>
+                      {a.id in briefs ? (
+                        briefs[a.id] ? (
+                          <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 10px', borderRadius: 12, background: '#DCFCE7', color: '#15803D', display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <FileText size={11} /> Brief completo
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 10px', borderRadius: 12, background: '#FEF3C7', color: '#B45309', display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <FileText size={11} /> Brief incompleto
+                          </span>
+                        )
+                      ) : (
+                        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 12, background: '#F1F5F9', color: '#94A3B8' }}>
+                          Sin brief
+                        </span>
+                      )}
                     </div>
                     <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap' }}>
                       <span style={{ fontSize: 13, color: 'var(--tc-muted)' }}>{a.email}</span>
@@ -335,6 +455,16 @@ export function Admin() {
                     )}
                   </div>
                   <div className="adm-appt-btns">
+                    {a.id in briefs && (
+                      <button
+                        onClick={() => openBrief(a)}
+                        disabled={briefLoading === a.id}
+                        title="Ver brief del proyecto"
+                        style={{ padding: '6px 12px', border: '1px solid #99F6E4', borderRadius: 6, fontSize: 12, cursor: 'pointer', background: '#F0FDFA', color: '#0D9488', fontFamily: 'var(--font)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}
+                      >
+                        <FileText size={13} /> {briefLoading === a.id ? 'Cargando...' : 'Ver brief'}
+                      </button>
+                    )}
                     {(['confirmado', 'cancelado', 'completado'] as const).map(s => (
                       <button
                         key={s}
@@ -434,6 +564,81 @@ export function Admin() {
           </>
         )}
       </div>
+
+      {briefModal && (
+        <div
+          onClick={() => setBriefModal(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(15,23,42,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 680, maxHeight: '88vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 24px 60px rgba(15,23,42,0.3)' }}
+          >
+            {/* Header del modal */}
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--tc-border)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+              <div>
+                <h3 style={{ fontSize: 17, fontWeight: 800, color: 'var(--tc-text)', margin: 0 }}>Brief — {briefModal.appt.name}</h3>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 6, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 12, color: 'var(--tc-muted)' }}>📅 {briefModal.appt.date} {briefModal.appt.time} · {briefModal.appt.service}</span>
+                  {briefModal.brief.completado ? (
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 10px', borderRadius: 12, background: '#DCFCE7', color: '#15803D' }}>Completo</span>
+                  ) : (
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 10px', borderRadius: 12, background: '#FEF3C7', color: '#B45309' }}>Incompleto</span>
+                  )}
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                <button
+                  onClick={downloadBriefPdf}
+                  style={{ padding: '7px 14px', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', background: 'var(--tc-primary)', color: '#fff', fontFamily: 'var(--font)', display: 'flex', alignItems: 'center', gap: 6 }}
+                >
+                  <Download size={14} /> Descargar PDF
+                </button>
+                <button
+                  onClick={() => setBriefModal(null)}
+                  style={{ padding: 7, border: '1px solid var(--tc-border)', borderRadius: 8, cursor: 'pointer', background: '#fff', color: 'var(--tc-muted)', display: 'flex', alignItems: 'center' }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Cuerpo scrolleable */}
+            <div style={{ overflowY: 'auto', padding: '20px 24px 28px' }}>
+              {!briefModal.brief.completado && (
+                <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 10, padding: '10px 14px', marginBottom: 18 }}>
+                  <p style={{ fontSize: 12.5, color: '#B45309', margin: 0, lineHeight: 1.5 }}>
+                    El cliente no llegó a terminar el formulario — estas son las respuestas que alcanzó a dar.
+                  </p>
+                </div>
+              )}
+              {(briefModal.brief.detalle ?? []).length === 0 ? (
+                <p style={{ fontSize: 13, color: 'var(--tc-muted)', textAlign: 'center', padding: 24 }}>
+                  Este brief no tiene respuestas registradas.
+                </p>
+              ) : (
+                (() => {
+                  const items = briefModal.brief.detalle ?? []
+                  const bloques = [...new Set(items.map(i => i.bloque))]
+                  return bloques.map(bloque => (
+                    <div key={bloque} style={{ marginBottom: 24 }}>
+                      <h4 style={{ fontSize: 13, fontWeight: 800, color: 'var(--tc-primary-dark)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 12px', paddingBottom: 6, borderBottom: '2px solid var(--tc-primary-light)' }}>
+                        {bloque}
+                      </h4>
+                      {items.filter(i => i.bloque === bloque).map((item, idx) => (
+                        <div key={idx} style={{ marginBottom: 14 }}>
+                          <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--tc-text)', margin: '0 0 4px', lineHeight: 1.5 }}>{item.pregunta}</p>
+                          <p style={{ fontSize: 13.5, color: '#4B5563', margin: 0, lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>{item.respuesta}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ))
+                })()
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

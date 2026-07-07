@@ -52,6 +52,21 @@ briefRouter.post('/', async (req: Request, res: Response) => {
     )
   }
 
+  // Detalle legible (bloque + pregunta + respuesta) que envía el formulario — el admin lo
+  // muestra tal cual, sin duplicar la lista de preguntas en este proyecto.
+  if (Array.isArray(raw.detalle)) {
+    update.detalle = (raw.detalle as unknown[])
+      .slice(0, 60)
+      .filter((item): item is Record<string, unknown> =>
+        typeof item === 'object' && item !== null && !Array.isArray(item))
+      .map(item => ({
+        bloque: stripHtml(String(item.bloque ?? '')).slice(0, 200),
+        pregunta: stripHtml(String(item.pregunta ?? '')).slice(0, 500),
+        respuesta: stripHtml(String(item.respuesta ?? '')).slice(0, 4000),
+      }))
+      .filter(item => item.pregunta && item.respuesta)
+  }
+
   update.completado = raw.completado === true
 
   try {
