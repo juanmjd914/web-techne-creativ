@@ -46,6 +46,8 @@ export function Navbar() {
           <img
             src={solid ? '/logo-dark.png' : '/logo.png'}
             alt="Techne Creativ"
+            width={solid ? 1200 : 1000}
+            height={solid ? 200 : 300}
             style={{ height: 36, width: 'auto', transition: 'opacity 0.3s' }}
           />
         </Link>

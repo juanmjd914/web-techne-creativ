@@ -16,7 +16,7 @@ export function Footer() {
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '64px 24px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 40 }}>
         {/* Brand */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <img src="/logo.png" alt="Techne Creativ" style={{ height: 40, width: 'auto', maxWidth: 160 }} />
+          <img src="/logo.png" alt="Techne Creativ" width={1000} height={300} style={{ height: 40, width: 'auto', maxWidth: 160 }} />
           <p style={{ fontSize: 13, lineHeight: 1.7, color: '#94A3B8' }}>
             Agencia de marketing digital y diseño web con sede en Rancagua, Chile. Potenciamos negocios con estrategia, diseño y tecnología.
           </p>
