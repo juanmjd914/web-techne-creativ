@@ -80,20 +80,54 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Google Tag Manager — cargado después del contenido principal -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-T64T3XTF');</script>
-
-    <!-- Google Analytics GA4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EVVYDENNHQ"></script>
+    <!--
+      GTM + GA4 diferidos hasta la primera interaccion real del usuario
+      (scroll/click/touch/tecla) o, como respaldo, a los 5s de inactividad
+      -- asi no compiten por CPU/red con el contenido inicial. PageSpeed
+      marcaba esto como "381 KiB de JS sin usar" (los ~572 KiB de GTM/GA4
+      se parsean pero casi nada se ejecuta durante la carga). No pierde
+      datos de visitas: sigue cargando igual, solo un poco despues.
+    -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-EVVYDENNHQ');
+      (function () {
+        var loaded = false
+        function loadAnalytics() {
+          if (loaded) return
+          loaded = true
+          ;(function (w, d, s, l, i) {
+            w[l] = w[l] || []
+            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
+            var f = d.getElementsByTagName(s)[0]
+            var j = d.createElement(s)
+            var dl = l != 'dataLayer' ? '&l=' + l : ''
+            j.async = true
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
+            f.parentNode.insertBefore(j, f)
+          })(window, document, 'script', 'dataLayer', 'GTM-T64T3XTF')
+
+          var gaScript = document.createElement('script')
+          gaScript.async = true
+          gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-EVVYDENNHQ'
+          document.head.appendChild(gaScript)
+          window.dataLayer = window.dataLayer || []
+          function gtag() {
+            dataLayer.push(arguments)
+          }
+          window.gtag = gtag
+          gtag('js', new Date())
+          gtag('config', 'G-EVVYDENNHQ')
+
+          events.forEach(function (ev) {
+            window.removeEventListener(ev, loadAnalytics, { passive: true })
+          })
+          clearTimeout(fallback)
+        }
+        var events = ['scroll', 'click', 'touchstart', 'mousemove', 'keydown']
+        events.forEach(function (ev) {
+          window.addEventListener(ev, loadAnalytics, { passive: true, once: true })
+        })
+        var fallback = setTimeout(loadAnalytics, 5000)
+      })()
     </script>
   </body>
 </html>
