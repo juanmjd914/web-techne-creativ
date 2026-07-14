@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { motion, AnimatePresence } from 'motion/react'
 import { ArrowRight, CheckCircle, ChevronDown, Code2, TrendingUp, Share2, BookOpen, Star, Zap, Shield, HeartHandshake, Users, Lightbulb, Wrench, Rocket } from 'lucide-react'
 import { CTASection } from '../components/CTASection'
@@ -12,6 +13,11 @@ function Hero() {
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
+    // En movil no cargamos el video (1.6MB): pantallas chicas, scroll rapido,
+    // costo real de datos/bateria. El degradado de respaldo ya cubre bien el hero.
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
+    if (isMobile || saveData) return
     const load = () => { v.src = '/video/hero.mp4'; v.load() }
     if (document.readyState === 'complete') load()
     else window.addEventListener('load', load, { once: true })
@@ -322,8 +328,20 @@ const FAQS = [
 
 function FAQ() {
   const [open, setOpen] = useState<number | null>(null)
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/\n/g, ' ') },
+    })),
+  }
   return (
     <section style={{ padding: '80px 24px' }}>
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+      </Helmet>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
           <p className="section-eyebrow">FAQ</p>
@@ -361,7 +379,7 @@ export function Home() {
   return (
     <main>
       <SEOHead
-        title="Agencia de Marketing Digital y Diseño Web"
+        title="Agencia de Marketing Digital en Rancagua, Chile"
         description="Diseño web, marketing digital y publicidad para negocios en Chile y Venezuela. Landing pages, e-commerce y más. Cotiza gratis hoy."
         path="/"
       />

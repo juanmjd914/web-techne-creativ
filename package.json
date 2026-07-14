@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"vite\" \"node --env-file=.env --experimental-strip-types server/index.ts\"",
-    "build": "npm install --include=dev && tsc -p tsconfig.app.json --noEmit --skipLibCheck && tsc -p tsconfig.server.json && vite build",
+    "build": "npm install --include=dev && tsc -p tsconfig.app.json --noEmit --skipLibCheck && tsc -p tsconfig.server.json && vite build && node scripts/prerender.mjs",
     "preview": "vite preview",
     "start": "node server-dist/index.js",
     "build:server": "tsc -p tsconfig.server.json"

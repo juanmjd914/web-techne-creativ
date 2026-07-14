@@ -4,23 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <title>Techne Creativ — Agencia de Marketing Digital y Diseño Web</title>
-    <meta name="description" content="Diseño web, marketing digital y publicidad para negocios en Chile y Venezuela. Landing pages, e-commerce y más. Cotiza gratis hoy." />
-    <meta name="robots" content="index, follow" />
+    <!--
+      Title, meta description, robots, canonical, og:* y twitter:* NO van aqui
+      hardcodeados — cada pagina los define via <SEOHead> (react-helmet-async).
+      Tenerlos duplicados en ambos lugares generaba title/meta repetidos en el
+      HTML final (visible recien al implementar el prerenderizado, ver
+      scripts/prerender.mjs). Este documento base solo lleva lo que NO varia
+      por pagina.
+    -->
     <meta name="google-site-verification" content="EJ3YV1p3eNy0qNCbbow4gRaZesrPvAVJZuQfGb59MYM" />
-    <link rel="canonical" href="https://technecreativ.com/" />
-
-    <!-- Open Graph base -->
-    <meta property="og:site_name" content="Techne Creativ" />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="es_419" />
-    <meta property="og:image" content="https://technecreativ.com/og-image.webp" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-
-    <!-- Twitter Card base -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@technecreativ" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

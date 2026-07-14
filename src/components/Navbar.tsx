@@ -84,7 +84,7 @@ export function Navbar() {
         <button
           onClick={() => setOpen(o => !o)}
           aria-label="Menu"
-          style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', color: '#374151', padding: 4 }}
+          style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', color: solid ? '#374151' : '#ffffff', padding: 4 }}
           className="mobile-toggle"
         >
           {open ? <X size={22} /> : <Menu size={22} />}

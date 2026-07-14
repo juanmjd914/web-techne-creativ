@@ -73,6 +73,14 @@ if (process.env.NODE_ENV !== 'production') {
 }
 // Serve frontend in production
 const dist = path.join(__dirname, '..', 'dist');
+// Paginas prerenderizadas (scripts/prerender.mjs) — archivos PLANOS, no
+// carpeta+index.html, a proposito: asi la URL que pide el navegador/bot y
+// la URL declarada en canonical/sitemap/og:url son exactamente la misma,
+// sin ningun redirect 301 de por medio.
+const PRERENDERED_ROUTES = ['servicios', 'por-que-nosotros', 'proceso', 'contacto', 'agendar-cita'];
+for (const route of PRERENDERED_ROUTES) {
+    app.get(`/${route}`, (_req, res) => res.sendFile(path.join(dist, `${route}.html`)));
+}
 app.use(express.static(dist));
 app.get('/{*path}', (_req, res) => {
     res.sendFile(path.join(dist, 'index.html'));
