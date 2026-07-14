@@ -124,7 +124,14 @@ async function prerender() {
 
     console.log('[prerender] listo — dist/ actualizado con HTML prerenderizado por ruta')
   } finally {
-    if (browser) await browser.close()
+    if (browser) await browser.close().catch(() => {})
+    // spawn con shell:true crea un proceso envoltorio (cmd.exe en Windows,
+    // /bin/sh en Linux) -- matar solo ese PID deja el vite/node de adentro
+    // huerfano, sirviendo el puerto para siempre y con eso el proceso de
+    // Node nunca termina de salir solo. Confirmado en produccion (Hostinger):
+    // el prerender terminaba bien (ver log "listo") pero el build se quedaba
+    // colgado 15+ minutos hasta que el propio Hostinger lo mataba por
+    // timeout y lo reportaba como "Failed to build the application".
     preview.kill('SIGKILL')
   }
 }
@@ -141,13 +148,24 @@ const withTimeout = Promise.race([
   ),
 ])
 
-withTimeout.catch((err) => {
-  console.error('[prerender] FALLO — el sitio se sube SIN prerender esta vez (no bloquea el deploy):')
-  console.error(err)
-  // process.exit(0) (no 1) a proposito: si Chromium no puede correr en este
-  // entorno (host compartido sin librerias del sistema, o se cuelga en el
-  // primer arranque), preferimos deployar el dist/ normal de Vite antes que
-  // tumbar el build entero o dejarlo colgado para siempre. El prerender es
-  // una mejora, no un requisito para que el sitio funcione.
-  process.exit(0)
-})
+withTimeout
+  .then(() => {
+    // Salida forzada tambien en el camino feliz: aunque prerender() ya
+    // intenta cerrar el navegador y matar el preview server, un proceso
+    // hijo huerfano (shell wrapper de spawn) puede dejar el event loop de
+    // Node vivo indefinidamente. Confirmado en produccion (Hostinger): el
+    // log mostraba "[prerender] listo" pero el build igual se quedaba
+    // colgado 15+ minutos hasta que Hostinger lo mataba por su propio
+    // timeout y lo reportaba como "Failed to build the application".
+    process.exit(0)
+  })
+  .catch((err) => {
+    console.error('[prerender] FALLO — el sitio se sube SIN prerender esta vez (no bloquea el deploy):')
+    console.error(err)
+    // process.exit(0) (no 1) a proposito: si Chromium no puede correr en este
+    // entorno (host compartido sin librerias del sistema, o se cuelga en el
+    // primer arranque), preferimos deployar el dist/ normal de Vite antes que
+    // tumbar el build entero o dejarlo colgado para siempre. El prerender es
+    // una mejora, no un requisito para que el sitio funcione.
+    process.exit(0)
+  })
