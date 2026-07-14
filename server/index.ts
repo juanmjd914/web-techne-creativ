@@ -96,7 +96,28 @@ for (const route of PRERENDERED_ROUTES) {
   app.get(`/${route}`, (_req, res) => res.sendFile(path.join(dist, `${route}.html`)))
 }
 
-app.use(express.static(dist))
+// Assets con hash en el nombre (/assets/index-CMYwAiSn.js) -- cualquier cambio
+// de contenido genera un nombre de archivo nuevo, asi que se pueden cachear
+// "para siempre" sin riesgo de servir una version vieja. PageSpeed marcaba
+// esto como el ahorro mas grande (1.6MB) porque antes TODO se servia con
+// max-age=0 (cero cache) via express.static por defecto.
+app.use('/assets', express.static(path.join(dist, 'assets'), {
+  maxAge: '1y',
+  immutable: true,
+}))
+
+// Resto de archivos estaticos (imagenes/video/logos en public/) -- no tienen
+// hash en el nombre, asi que un cache largo con revalidacion es mas seguro
+// que "immutable". Los .html se excluyen del cache largo: express.static
+// serviria index.html/servicios.html/etc con el mismo maxAge, y despues de
+// cada deploy el navegador seguiria mostrando la version vieja hasta que
+// expire el cache.
+app.use(express.static(dist, {
+  maxAge: '1d',
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache')
+  },
+}))
 app.get('/{*path}', (_req, res) => {
   res.sendFile(path.join(dist, 'index.html'))
 })
