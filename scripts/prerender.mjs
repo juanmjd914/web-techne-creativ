@@ -1,23 +1,24 @@
-// Prerenderizado post-build: renderiza cada ruta publica con Chrome headless
-// (dump-dom, JS ya ejecutado) y guarda un HTML estatico por ruta en dist/.
-// Asi Google y cualquier bot que no ejecute JS (WhatsApp, ClaudeBot, GPTBot...)
-// reciben el contenido real en el primer fetch, no un <div id="root"></div> vacio.
+// Prerenderizado post-build: renderiza cada ruta publica con Chromium
+// (puppeteer, portatil — se instala solo, sin depender de un Chrome del
+// sistema) y guarda un HTML estatico por ruta en dist/. Asi Google y
+// cualquier bot que no ejecute JS (WhatsApp, ClaudeBot, GPTBot...) reciben
+// el contenido real en el primer fetch, no un <div id="root"></div> vacio.
 //
-// express.static ya sirve dist/<ruta>/index.html automaticamente cuando existe
-// (comportamiento estandar de servidores estaticos) — no hace falta tocar server/index.ts.
+// Si por lo que sea Chromium no puede arrancar en el entorno de build
+// (ej. faltan librerias del sistema en un host compartido), el script NO
+// rompe el build: avisa y sigue con el dist/ normal de Vite (sin prerender)
+// en vez de dejar el deploy entero caido.
 
-import { spawn, execFileSync } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import puppeteer from 'puppeteer'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
 const distDir = join(root, 'dist')
 const PORT = 4610
-const CHROME =
-  process.env.CHROME_PATH ||
-  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
 
 // Archivos PLANOS (servicios.html, no servicios/index.html) a proposito:
 // dejar que Express sirva un directorio por su index.html requiere el
@@ -49,19 +50,6 @@ async function waitForServer(url, timeoutMs = 15000) {
   throw new Error(`vite preview no respondio en ${timeoutMs}ms`)
 }
 
-function dumpDom(url) {
-  const args = [
-    '--headless=new',
-    '--disable-gpu',
-    '--virtual-time-budget=8000',
-    '--run-all-compositor-stages-before-draw',
-    '--dump-dom',
-    `--user-data-dir=${process.env.TEMP}\\chrome-prerender-${Date.now()}`,
-    url,
-  ]
-  return execFileSync(CHROME, args, { maxBuffer: 20 * 1024 * 1024 }).toString('utf-8')
-}
-
 // Defensa: si alguna vez vuelve a colarse un <title> o meta duplicado
 // (ej. alguien reintroduce un tag estatico en index.html), nos quedamos
 // solo con la ULTIMA aparicion de cada uno — es la que renderizo Helmet
@@ -83,16 +71,7 @@ function dedupeHead(html) {
   return html
 }
 
-function killProcessTree(pid) {
-  try {
-    execFileSync('taskkill', ['/pid', String(pid), '/t', '/f'], { stdio: 'ignore' })
-  } catch {
-    // ya estaba muerto o no existe — no es un error real
-  }
-}
-
-async function main() {
-  console.log('[prerender] iniciando vite preview en puerto', PORT)
+async function prerender() {
   const preview = spawn(
     'npx',
     ['vite', 'preview', '--port', String(PORT), '--strictPort'],
@@ -100,9 +79,18 @@ async function main() {
   )
   preview.stderr.on('data', (d) => process.stderr.write(`[vite preview] ${d}`))
 
+  let browser
   try {
     await waitForServer(`http://localhost:${PORT}/`)
-    console.log('[prerender] servidor listo, prerenderizando', ROUTES.length, 'rutas')
+
+    // --no-sandbox / --disable-setuid-sandbox: casi siempre necesarios para
+    // correr Chromium como root dentro de un contenedor de build (Hostinger,
+    // GitHub Actions, etc.) — sin esto, Chromium no arranca en esos entornos.
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+    })
+    console.log('[prerender] Chromium listo, prerenderizando', ROUTES.length, 'rutas')
 
     // Primero se capturan TODOS los snapshots en memoria y recien al final se
     // escriben a disco. Si escribieramos ruta por ruta, la primera escritura
@@ -111,13 +99,15 @@ async function main() {
     // sirviendose como base para /servicios, /proceso, etc., y su <title>
     // colaba junto al correcto (bug real detectado y confirmado 2026-07-14).
     const snapshots = []
+    const page = await browser.newPage()
 
     for (const route of ROUTES) {
       const url = `http://localhost:${PORT}${route.path}`
       console.log('[prerender]', route.path, '->', route.out)
-      let html = dumpDom(url)
+      await page.goto(url, { waitUntil: 'networkidle0', timeout: 20000 })
+      let html = await page.content()
 
-      if (!html.includes('<div id="root">') || html.length < 2000) {
+      if (!html.includes('id="root"') || html.length < 2000) {
         throw new Error(
           `[prerender] snapshot sospechoso para ${route.path} (${html.length} chars) — abortando sin escribir`,
         )
@@ -134,14 +124,30 @@ async function main() {
 
     console.log('[prerender] listo — dist/ actualizado con HTML prerenderizado por ruta')
   } finally {
-    // En Windows, spawn con shell:true crea un cmd.exe envolviendo el proceso
-    // real de node/vite — preview.kill() solo mata el wrapper y deja el
-    // servidor huerfano escuchando el puerto. taskkill /t mata el arbol completo.
-    if (preview.pid) killProcessTree(preview.pid)
+    if (browser) await browser.close()
+    preview.kill('SIGKILL')
   }
 }
 
-main().catch((err) => {
+// Timeout duro: si Chromium tarda en arrancar (primer uso en un entorno
+// nuevo puede colgarse por escaneo de antivirus, permisos, o falta de
+// librerias del sistema) o cualquier otro paso se atasca, el build sigue
+// de largo en vez de quedar esperando para siempre.
+const TIMEOUT_MS = 60_000
+const withTimeout = Promise.race([
+  prerender(),
+  new Promise((_, reject) =>
+    setTimeout(() => reject(new Error(`[prerender] timeout de ${TIMEOUT_MS}ms — abortando`)), TIMEOUT_MS),
+  ),
+])
+
+withTimeout.catch((err) => {
+  console.error('[prerender] FALLO — el sitio se sube SIN prerender esta vez (no bloquea el deploy):')
   console.error(err)
-  process.exit(1)
+  // process.exit(0) (no 1) a proposito: si Chromium no puede correr en este
+  // entorno (host compartido sin librerias del sistema, o se cuelga en el
+  // primer arranque), preferimos deployar el dist/ normal de Vite antes que
+  // tumbar el build entero o dejarlo colgado para siempre. El prerender es
+  // una mejora, no un requisito para que el sitio funcione.
+  process.exit(0)
 })
