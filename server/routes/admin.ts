@@ -178,3 +178,28 @@ adminRouter.get('/messages', async (req: Request, res: Response) => {
   if (error) { res.status(500).json({ error: 'Error DB' }); return }
   res.json(data)
 })
+
+adminRouter.get('/demo-requests', async (req: Request, res: Response) => {
+  if (!checkSession(tokenFrom(req))) { res.status(401).json({ error: 'No autorizado' }); return }
+  const { data, error } = await supabase
+    .from('demo_requests')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (error) { res.status(500).json({ error: 'Error DB' }); return }
+  res.json(data)
+})
+
+adminRouter.patch('/demo-requests/:id', async (req: Request, res: Response) => {
+  if (!checkSession(tokenFrom(req))) { res.status(401).json({ error: 'No autorizado' }); return }
+  const { status } = req.body
+  const { error } = await supabase.from('demo_requests').update({ status }).eq('id', req.params.id)
+  if (error) { res.status(500).json({ error: 'Error DB' }); return }
+  res.json({ ok: true })
+})
+
+adminRouter.delete('/demo-requests/:id', async (req: Request, res: Response) => {
+  if (!checkSession(tokenFrom(req))) { res.status(401).json({ error: 'No autorizado' }); return }
+  const { error } = await supabase.from('demo_requests').delete().eq('id', req.params.id)
+  if (error) { res.status(500).json({ error: 'Error DB' }); return }
+  res.json({ ok: true })
+})

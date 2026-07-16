@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { LogIn, Calendar, MessageSquare, CheckCircle, Clock, XCircle, RefreshCw, LogOut, Trash2, MailOpen, Mail, CalendarPlus, User, Eye, EyeOff, FileText, Download, X } from 'lucide-react'
+import { LogIn, Calendar, MessageSquare, CheckCircle, Clock, XCircle, RefreshCw, LogOut, Trash2, MailOpen, Mail, CalendarPlus, User, Eye, EyeOff, FileText, Download, X, Gift } from 'lucide-react'
 import { API_URL } from '../lib/config'
 
 interface Appointment {
@@ -42,6 +42,19 @@ interface ContactMsg {
   created_at: string
 }
 
+interface DemoRequest {
+  id: string
+  negocio: string
+  nombre: string
+  whatsapp: string
+  email: string | null
+  tipo_proyecto: string
+  mensaje: string | null
+  status: string
+  prospecto_id: string | null
+  created_at: string
+}
+
 const STATUS_COLORS: Record<string, string> = {
   pendiente: '#F59E0B',
   confirmado: '#22C55E',
@@ -61,13 +74,15 @@ export function Admin() {
   const [loginPass, setLoginPass] = useState('')
   const [loginErr, setLoginErr] = useState('')
   const [showPass, setShowPass] = useState(false)
-  const [tab, setTab] = useState<'appointments' | 'messages'>('appointments')
+  const [tab, setTab] = useState<'appointments' | 'messages' | 'demos'>('appointments')
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [messages, setMessages] = useState<ContactMsg[]>([])
+  const [demoRequests, setDemoRequests] = useState<DemoRequest[]>([])
   const [loading, setLoading] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
   const [apptPage, setApptPage] = useState(1)
   const [msgPage, setMsgPage] = useState(1)
+  const [demoPage, setDemoPage] = useState(1)
   // appointment_id → completado (true/false). Si una cita no está aquí, no tiene brief.
   const [briefs, setBriefs] = useState<Record<string, boolean>>({})
   const [briefModal, setBriefModal] = useState<{ appt: Appointment; brief: BriefDetail } | null>(null)
@@ -112,14 +127,16 @@ export function Admin() {
   const loadData = async () => {
     setLoading(true)
     try {
-      const [aRes, mRes, bRes] = await Promise.all([
+      const [aRes, mRes, bRes, dRes] = await Promise.all([
         fetch(`${API_URL}/api/admin/appointments`, { headers: authHeaders(token) }),
         fetch(`${API_URL}/api/admin/messages`, { headers: authHeaders(token) }),
         fetch(`${API_URL}/api/admin/briefs`, { headers: authHeaders(token) }),
+        fetch(`${API_URL}/api/admin/demo-requests`, { headers: authHeaders(token) }),
       ])
       if (aRes.status === 401) { doLogout(); return }
       if (aRes.ok) setAppointments(await aRes.json())
       if (mRes.ok) setMessages(await mRes.json())
+      if (dRes.ok) setDemoRequests(await dRes.json())
       if (bRes.ok) {
         const rows: { appointment_id: string; completado: boolean }[] = await bRes.json()
         const map: Record<string, boolean> = {}
@@ -267,6 +284,26 @@ export function Admin() {
     loadData()
   }
 
+  const toggleDemoStatus = async (id: string, currentStatus: string) => {
+    await fetch(`${API_URL}/api/admin/demo-requests/${id}`, {
+      method: 'PATCH',
+      headers: authHeaders(token),
+      body: JSON.stringify({ status: currentStatus === 'pendiente' ? 'atendido' : 'pendiente' }),
+    })
+    loadData()
+  }
+
+  const deleteDemoRequest = async (id: string) => {
+    if (!confirm('¿Eliminar esta solicitud de demo? Esta acción no se puede deshacer.')) return
+    setDeleting(id)
+    await fetch(`${API_URL}/api/admin/demo-requests/${id}`, {
+      method: 'DELETE',
+      headers: authHeaders(token),
+    })
+    setDeleting(null)
+    loadData()
+  }
+
   if (!authed) {
     return (
       <div style={{ minHeight: '100vh', background: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
@@ -373,6 +410,7 @@ export function Admin() {
             { label: 'Citas pendientes', value: appointments.filter(a => a.status === 'pendiente').length, icon: <Clock size={18} />, color: '#F59E0B' },
             { label: 'Citas confirmadas', value: appointments.filter(a => a.status === 'confirmado').length, icon: <CheckCircle size={18} />, color: '#22C55E' },
             { label: 'Mensajes sin leer', value: unreadCount, icon: <MessageSquare size={18} />, color: '#8B5CF6' },
+            { label: 'Demos pendientes', value: demoRequests.filter(d => d.status === 'pendiente').length, icon: <Gift size={18} />, color: '#EC4899' },
           ].map(s => (
             <div key={s.label} style={{ background: '#fff', border: '1px solid var(--tc-border)', borderRadius: 12, padding: '20px', display: 'flex', gap: 16, alignItems: 'center' }}>
               <div style={{ width: 40, height: 40, borderRadius: 10, background: `${s.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color, flexShrink: 0 }}>
@@ -387,19 +425,82 @@ export function Admin() {
         </div>
 
         <div style={{ display: 'flex', gap: 4, marginBottom: 20 }}>
-          {(['appointments', 'messages'] as const).map(t => (
+          {(['appointments', 'messages', 'demos'] as const).map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
               style={{ padding: '9px 20px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, fontFamily: 'var(--font)', background: tab === t ? 'var(--tc-primary)' : 'transparent', color: tab === t ? '#fff' : 'var(--tc-muted)', transition: 'all 0.2s' }}
             >
-              {t === 'appointments' ? `Citas (${appointments.length})` : `Mensajes (${messages.length})${unreadCount > 0 ? ` · ${unreadCount} sin leer` : ''}`}
+              {t === 'appointments'
+                ? `Citas (${appointments.length})`
+                : t === 'messages'
+                ? `Mensajes (${messages.length})${unreadCount > 0 ? ` · ${unreadCount} sin leer` : ''}`
+                : `Demo Gratis (${demoRequests.length})`}
             </button>
           ))}
         </div>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: 60, color: 'var(--tc-muted)' }}>Cargando...</div>
+        ) : tab === 'demos' ? (
+          <>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {demoRequests.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 60, color: 'var(--tc-muted)', background: '#fff', borderRadius: 12, border: '1px solid var(--tc-border)' }}>
+                No hay solicitudes de demo gratis aún.
+              </div>
+            ) : demoRequests.slice((demoPage - 1) * PAGE_SIZE, demoPage * PAGE_SIZE).map(d => (
+              <div key={d.id} style={{ background: d.status === 'atendido' ? '#fff' : '#FDF2F8', border: `1px solid ${d.status === 'atendido' ? 'var(--tc-border)' : '#FBCFE8'}`, borderRadius: 12, padding: 20 }}>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--tc-text)' }}>{d.negocio}</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, padding: '2px 10px', borderRadius: 12, background: d.status === 'atendido' ? '#F1F5F9' : '#FCE7F3', color: d.status === 'atendido' ? 'var(--tc-muted)' : '#BE185D' }}>
+                        {d.status}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: 16, marginTop: 8, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 13, color: 'var(--tc-muted)' }}>{d.nombre}</span>
+                      {d.whatsapp && <a href={`https://wa.me/${d.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: '#25D366', textDecoration: 'none' }}>{d.whatsapp}</a>}
+                      {d.email && <a href={`mailto:${d.email}`} style={{ fontSize: 13, color: 'var(--tc-primary)', textDecoration: 'none' }}>{d.email}</a>}
+                      <span style={{ fontSize: 13, color: 'var(--tc-muted)' }}>{d.tipo_proyecto}</span>
+                    </div>
+                    {d.mensaje && <p style={{ fontSize: 13, color: 'var(--tc-muted)', marginTop: 8, maxWidth: 600 }}>{d.mensaje}</p>}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+                    <span style={{ fontSize: 12, color: 'var(--tc-muted)', whiteSpace: 'nowrap' }}>
+                      {new Date(d.created_at).toLocaleDateString('es-CL')}
+                    </span>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        onClick={() => toggleDemoStatus(d.id, d.status)}
+                        title={d.status === 'pendiente' ? 'Marcar como atendida' : 'Marcar como pendiente'}
+                        style={{ padding: '5px 10px', border: '1px solid var(--tc-border)', borderRadius: 6, fontSize: 12, cursor: 'pointer', background: '#fff', color: 'var(--tc-muted)', fontFamily: 'var(--font)', display: 'flex', alignItems: 'center', gap: 4 }}
+                      >
+                        <CheckCircle size={13} /> {d.status === 'pendiente' ? 'Atendida' : 'Pendiente'}
+                      </button>
+                      <button
+                        onClick={() => deleteDemoRequest(d.id)}
+                        disabled={deleting === d.id}
+                        title="Eliminar solicitud"
+                        style={{ padding: '5px 10px', border: '1px solid #FCA5A5', borderRadius: 6, fontSize: 12, cursor: 'pointer', background: '#FFF5F5', color: '#EF4444', fontFamily: 'var(--font)', display: 'flex', alignItems: 'center', gap: 4 }}
+                      >
+                        <Trash2 size={13} /> {deleting === d.id ? '...' : 'Eliminar'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {demoRequests.length > PAGE_SIZE && (
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 20 }}>
+              <button onClick={() => setDemoPage(p => Math.max(1, p - 1))} disabled={demoPage === 1} style={{ padding: '6px 16px', border: '1px solid var(--tc-border)', borderRadius: 8, fontSize: 13, cursor: demoPage === 1 ? 'default' : 'pointer', background: '#fff', color: demoPage === 1 ? 'var(--tc-muted)' : 'var(--tc-text)', fontFamily: 'var(--font)' }}>← Anterior</button>
+              <span style={{ padding: '6px 12px', fontSize: 13, color: 'var(--tc-muted)' }}>{demoPage} / {Math.ceil(demoRequests.length / PAGE_SIZE)}</span>
+              <button onClick={() => setDemoPage(p => Math.min(Math.ceil(demoRequests.length / PAGE_SIZE), p + 1))} disabled={demoPage === Math.ceil(demoRequests.length / PAGE_SIZE)} style={{ padding: '6px 16px', border: '1px solid var(--tc-border)', borderRadius: 8, fontSize: 13, cursor: demoPage === Math.ceil(demoRequests.length / PAGE_SIZE) ? 'default' : 'pointer', background: '#fff', color: demoPage === Math.ceil(demoRequests.length / PAGE_SIZE) ? 'var(--tc-muted)' : 'var(--tc-text)', fontFamily: 'var(--font)' }}>Siguiente →</button>
+            </div>
+          )}
+          </>
         ) : tab === 'appointments' ? (
           <>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

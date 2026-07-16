@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { motion, AnimatePresence } from 'motion/react'
-import { ArrowRight, CheckCircle, ChevronDown, Code2, TrendingUp, Share2, BookOpen, Star, Zap, Shield, HeartHandshake, Users, Lightbulb, Wrench, Rocket } from 'lucide-react'
+import { ArrowRight, CheckCircle, ChevronDown, Code2, TrendingUp, Share2, BookOpen, Star, Zap, Shield, HeartHandshake, Users, Lightbulb, Wrench, Rocket, Gift, Send } from 'lucide-react'
 import { CTASection } from '../components/CTASection'
 import { SEOHead } from '../components/SEOHead'
+import { API_URL, SERVICES_FOR_BOOKING } from '../lib/config'
 
 // ──────────── HERO ────────────
 function Hero() {
@@ -171,6 +172,137 @@ function WhyUs() {
             </motion.div>
           ))}
         </div>
+      </div>
+    </section>
+  )
+}
+
+// ──────────── DEMO GRATIS ────────────
+interface DemoFormState {
+  negocio: string
+  nombre: string
+  whatsapp: string
+  email: string
+  tipo_proyecto: string
+  mensaje: string
+}
+
+const DEMO_INIT: DemoFormState = { negocio: '', nombre: '', whatsapp: '', email: '', tipo_proyecto: '', mensaje: '' }
+
+function DemoGratisSection() {
+  const [form, setForm] = useState<DemoFormState>(DEMO_INIT)
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+
+  const set = (k: keyof DemoFormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setForm(f => ({ ...f, [k]: e.target.value }))
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '10px 14px',
+    border: '1.5px solid var(--tc-border)',
+    borderRadius: 8,
+    fontSize: 14,
+    fontFamily: 'var(--font)',
+    outline: 'none',
+    boxSizing: 'border-box',
+    background: '#fff',
+  }
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('loading')
+    try {
+      const res = await fetch(`${API_URL}/api/demo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error('Error')
+      setStatus('success')
+      setForm(DEMO_INIT)
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  return (
+    <section style={{ padding: '80px 24px', background: 'var(--tc-primary-light)' }}>
+      <div className="responsive-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 48, alignItems: 'center' }}>
+        <div>
+          <p className="section-eyebrow">Demo gratis</p>
+          <h2 className="section-title" style={{ marginTop: 8, marginBottom: 16 }}>Mira cómo se vería tu proyecto hoy, sin costo y sin compromiso</h2>
+          <p className="section-subtitle" style={{ marginBottom: 0 }}>
+            Cuéntanos sobre tu negocio y te preparamos una demo gratuita de tu sitio web, menú digital o tienda online. Sin compromiso.
+          </p>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.45 }}
+          style={{ background: '#fff', border: '1px solid var(--tc-border)', borderRadius: 20, padding: 36, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}
+        >
+          {status === 'success' ? (
+            <div style={{ textAlign: 'center', padding: '24px 0' }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <CheckCircle size={28} style={{ color: '#22C55E' }} />
+              </div>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--tc-text)', marginBottom: 8 }}>¡Solicitud recibida!</h3>
+              <p style={{ fontSize: 14, color: 'var(--tc-muted)', lineHeight: 1.7 }}>
+                Te contactaremos en menos de 24 horas por WhatsApp o correo con tu demo gratis.
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--tc-text)', margin: 0, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Gift size={18} style={{ color: 'var(--tc-primary)' }} /> Solicita tu demo gratis
+              </h3>
+              {[
+                { label: 'Nombre del negocio *', key: 'negocio' as const, type: 'text', placeholder: 'Nombre de tu negocio' },
+                { label: 'Tu nombre *', key: 'nombre' as const, type: 'text', placeholder: 'Tu nombre completo' },
+                { label: 'WhatsApp *', key: 'whatsapp' as const, type: 'tel', placeholder: '+56 9 1234 5678' },
+                { label: 'Correo electrónico (opcional)', key: 'email' as const, type: 'email', placeholder: 'tu@email.com' },
+              ].map(f => (
+                <div key={f.key}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>{f.label}</label>
+                  <input
+                    type={f.type}
+                    value={form[f.key]}
+                    onChange={set(f.key)}
+                    placeholder={f.placeholder}
+                    required={f.key !== 'email'}
+                    style={inputStyle}
+                  />
+                </div>
+              ))}
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Tipo de proyecto *</label>
+                <select value={form.tipo_proyecto} onChange={set('tipo_proyecto')} required style={inputStyle}>
+                  <option value="">Seleccionar...</option>
+                  {SERVICES_FOR_BOOKING.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Mensaje (opcional)</label>
+                <textarea
+                  value={form.mensaje}
+                  onChange={set('mensaje')}
+                  placeholder="Cuéntanos brevemente sobre tu proyecto"
+                  rows={3}
+                  style={{ ...inputStyle, resize: 'vertical' as const }}
+                />
+              </div>
+              {status === 'error' && (
+                <p style={{ fontSize: 13, color: '#DC2626', margin: 0 }}>Hubo un error. Por favor escríbenos por WhatsApp.</p>
+              )}
+              <button type="submit" className="btn-teal" disabled={status === 'loading'} style={{ justifyContent: 'center' }}>
+                {status === 'loading' ? 'Enviando...' : <><Send size={16} /> Quiero mi demo gratis</>}
+              </button>
+            </form>
+          )}
+        </motion.div>
       </div>
     </section>
   )
@@ -386,6 +518,7 @@ export function Home() {
       <Hero />
       <ServicesPreview />
       <WhyUs />
+      <DemoGratisSection />
       <Stats />
       <ProcessPreview />
       <FAQ />
