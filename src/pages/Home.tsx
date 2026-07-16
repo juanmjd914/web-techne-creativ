@@ -227,7 +227,7 @@ function DemoGratisSection() {
   }
 
   return (
-    <section style={{ padding: '80px 24px', background: 'var(--tc-primary-light)' }}>
+    <section id="demo-gratis" style={{ padding: '80px 24px', background: 'var(--tc-primary-light)' }}>
       <div className="responsive-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 48, alignItems: 'center' }}>
         <div>
           <p className="section-eyebrow">Demo gratis</p>
@@ -508,6 +508,15 @@ function FAQ() {
 }
 
 export function Home() {
+  useEffect(() => {
+    if (window.location.hash === '#demo-gratis') {
+      const t = setTimeout(() => {
+        document.getElementById('demo-gratis')?.scrollIntoView({ behavior: 'smooth' })
+      }, 50)
+      return () => clearTimeout(t)
+    }
+  }, [])
+
   return (
     <main>
       <SEOHead

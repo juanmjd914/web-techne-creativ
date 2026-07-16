@@ -119,8 +119,19 @@ export function Navbar() {
               </li>
             ))}
             <li style={{ marginTop: 12 }}>
-              <Link to="/agendar-cita" className="btn-teal mobile-cta" style={{ width: '100%', justifyContent: 'center', fontSize: 14 }}>
-                Agendar cita
+              <Link
+                to="/#demo-gratis"
+                className="btn-teal mobile-cta"
+                style={{ width: '100%', justifyContent: 'center', fontSize: 14 }}
+                onClick={e => {
+                  if (pathname === '/') {
+                    e.preventDefault()
+                    setOpen(false)
+                    document.getElementById('demo-gratis')?.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
+              >
+                Solicita tu demo gratis
               </Link>
             </li>
           </ul>
