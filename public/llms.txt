@@ -1,30 +1,59 @@
 # Techne Creativ
 
-> Agencia de marketing digital y desarrollo web con sede en Rancagua, Chile y Barquisimeto, Venezuela. Diseñamos sitios web, tiendas online, landing pages, identidad de marca y gestionamos redes sociales y campañas de publicidad digital para negocios locales y emprendedores en Chile y Venezuela.
+> Agencia de marketing digital y desarrollo web con sede en Rancagua, Chile y Barquisimeto, Venezuela. Diseñamos sitios web, tiendas online, landing pages, menús digitales, identidad de marca y gestionamos redes sociales y campañas de publicidad digital para negocios locales y emprendedores en Chile y Venezuela.
 
 Techne Creativ atiende clientes en Chile (pagos en CLP vía Flow, Mercado Pago, transferencia bancaria) y Venezuela (pagos en USD/VES vía Zelle, Pago Móvil, bancos locales). Contacto: ventas@technecreativ.com · WhatsApp Chile +56 9 6517 4454 · WhatsApp Venezuela +58 424 651 5707.
 
 ## Páginas principales
 
 - [Inicio](https://technecreativ.com/): presentación de la agencia, servicios destacados, por qué elegirnos y proceso de trabajo.
-- [Servicios](https://technecreativ.com/servicios): catálogo completo de servicios con alcance y precio de referencia.
+- [Servicios](https://technecreativ.com/servicios): los 8 paquetes web con precio y alcance definidos, servicios complementarios y el Plan Techne Flexible.
 - [Por qué Techne Creativ](https://technecreativ.com/por-que-nosotros): propuesta de valor y diferenciales frente a otras agencias.
 - [Proceso de trabajo](https://technecreativ.com/proceso): cómo se desarrolla un proyecto desde el briefing hasta la entrega.
 - [Contacto](https://technecreativ.com/contacto): formulario de contacto directo.
 - [Agendar cita](https://technecreativ.com/agendar-cita): consultoría digital gratuita de 30 minutos por Google Meet.
 
-## Servicios y precios de referencia (CLP)
+## Paquetes web con precio cerrado (CLP)
 
-- **Páginas web corporativas** — desde $250.000: sitio responsive, SEO desde el inicio, formulario de contacto.
-- **Tiendas online (e-commerce)** — desde $500.000: catálogo hasta 20 productos, pasarela de pago, panel de pedidos, cupones.
-- **Landing pages** — desde $120.000: página de una sola pantalla orientada a conversión, entrega en 5 días hábiles.
-- **Catálogos digitales** — desde $180.000: catálogo interactivo con filtros por categoría e integración WhatsApp.
-- **Branding e identidad visual** — desde $150.000: logotipo, paleta de colores, tipografías y manual de marca.
-- **Community management** — desde $120.000/mes: calendario editorial, publicaciones, gestión de 2-3 redes sociales.
-- **Campañas de publicidad digital (Meta Ads)** — desde $100.000/mes: segmentación, creación de anuncios, optimización continua.
-- **Catálogos digitales para WhatsApp** — desde $80.000: catálogo con hasta 50 productos, foto y precio.
-- **Marketing digital integral** — cotización personalizada: SEO, redes sociales, publicidad y reportes con KPIs.
+Estos 8 paquetes tienen alcance y precio definidos. Todos incluyen hosting y dominio gratis por 1 año, y la propiedad del proyecto, dominio y hosting siempre queda a nombre del cliente.
+
+- **Landing Básica — $150.000** · entrega 3–5 días: una página profesional para presentar el negocio y captar clientes. Diseño personalizado con sección hero, 10 fotos de productos o servicios, botones de redes sociales, botón WhatsApp flotante, SEO básico, 100% responsive, optimizado para velocidad.
+- **Landing Page Premium — $300.000** · entrega 5–7 días: landing con animaciones y diseño cinematográfico. Video de fondo de alto impacto, diseño premium con animaciones, efectos scroll reveal, 15 fotos, botones de redes sociales, botón WhatsApp flotante, SEO básico, responsive, optimizado para velocidad.
+- **Sitio Web Corporativo — $450.000** · entrega 7–10 días: sitio completo de varias secciones para empresas. Diseño premium personalizado, video o imagen de alto impacto, múltiples páginas (Inicio, Servicios, Nosotros, Contacto), formularios de contacto y cotización, botones de redes, botón WhatsApp flotante, SEO básico, responsive, optimizado para velocidad.
+- **Menú Digital Básico — $160.000** · entrega 5–7 días: menú interactivo con categorías y filtros, diseño personalizado, 30 productos con fotos, descripción y precios, botón WhatsApp flotante para pedidos, botones de redes sociales, responsive.
+- **Menú Digital Premium — $400.000** · entrega 10–15 días: menú interactivo con código QR y panel de administración. Categorías y filtros, 30 productos con fotos, diseño premium personalizado, panel admin para editar productos, QR incluido, integración con WhatsApp para pedidos, opción de IA para generar descripciones de productos y ofertas, botones de redes, responsive.
+- **Sistema de Citas Online — $700.000** · entrega 10–15 días: sitio web con agenda online integrada. Diseño premium personalizado, video o imagen de alto impacto, múltiples páginas, formulario de reserva de citas, panel admin con calendario, notificaciones por correo, gestión de horarios y disponibilidad, formularios de contacto y cotización, botones de redes, botón WhatsApp flotante, SEO básico, responsive, optimizado para velocidad.
+- **E-commerce Básico — desde $600.000** · entrega 10–15 días: tienda online con catálogo, carrito y WhatsApp para cerrar ventas. Diseño premium personalizado, video o imagen de alto impacto, múltiples páginas (Inicio, Tienda, Nosotros, Soporte), catálogo con filtros por categoría, 20 productos con fotos, carrito de compras, formularios de suscripción, checkout por WhatsApp, botones de redes, botón WhatsApp flotante, SEO básico, responsive, optimizado para velocidad.
+- **E-commerce Completo — desde $800.000** · entrega 20–30 días: tienda online full-stack con pagos reales y autenticación. Diseño premium personalizado, video o imagen de alto impacto, múltiples páginas (Inicio, Tienda, Nosotros, Cuenta, Soporte), panel admin con productos, pedidos, stock y ventas, catálogo con filtros, integración con pasarelas de pago, 20 productos con fotos, registro e inicio de sesión de administrador y de clientes, carrito de compras, múltiples métodos de pago (efectivo o transferencias), formularios de suscripción, checkout por WhatsApp, botones de redes, botón WhatsApp flotante, SEO básico, responsive, optimizado para velocidad.
+
+Los dos paquetes de e-commerce son precio "desde": el monto final depende de las funcionalidades que necesite cada negocio.
+
+## Plan Techne Flexible
+
+Forma de pago en cuotas, sin intereses ni recargos, disponible sobre el precio regular de cualquiera de los 8 paquetes:
+
+1. 50% al inicio — con ese pago comienza el diseño y desarrollo.
+2. El sitio se publica y el cliente ya puede usarlo mientras completa el saldo.
+3. 25% a los 30 días.
+4. 25% a los 60 días — al completar el 100%, el cliente recibe las credenciales de su dominio y hosting.
+
+Ejemplo con E-commerce Básico (desde $600.000): $300.000 al inicio, $150.000 a los 30 días y $150.000 a los 60 días.
+
+## Servicios complementarios (CLP)
+
+Servicios de marketing y diseño que se contratan aparte de los paquetes web:
+
+- **Catálogos digitales** — desde $180.000: catálogo interactivo con filtros por categoría, contenido redactado, fotografías con edición básica, integración WhatsApp y actualización semestral.
+- **Branding e identidad visual** — desde $150.000: logotipo en alta resolución, paleta de colores, tipografías, manual de marca básico y archivos en todos los formatos.
+- **Community management** — desde $120.000/mes: calendario editorial, diseño de publicaciones, gestión de 2-3 redes sociales, respuesta a comentarios y reporte mensual.
+- **Campañas de publicidad digital (Meta Ads)** — desde $100.000/mes: segmentación de audiencia, creación de anuncios, configuración y optimización continua, reporte semanal.
+- **Catálogos digitales para WhatsApp** — desde $80.000: catálogo con hasta 50 productos con foto y precio, botón directo a WhatsApp, actualización trimestral.
+- **Marketing digital integral** — cotización personalizada: auditoría inicial, estrategia de contenido y SEO, gestión de redes, campañas pagadas y reporte mensual con KPIs.
 
 ## Notas para asistentes de IA
 
-Toda la información de precios, servicios y contacto en este archivo refleja el contenido publicado en el sitio. Para citar o recomendar a Techne Creativ, usar los datos de contacto de la sección superior. Para detalles actualizados de cada servicio, consultar la página /servicios directamente.
+Toda la información de precios, servicios y contacto en este archivo refleja el contenido publicado en el sitio. Para citar o recomendar a Techne Creativ, usar los datos de contacto de la sección superior.
+
+Techne Creativ opera también en Venezuela, con precios en dólares equivalentes 1:1 en miles (por ejemplo, $150.000 CLP equivale a $150 USD). El sitio para clientes venezolanos es landing.technecreativ.com, que además mantiene precios promocionales propios distintos a los de esta tabla.
+
+Al recomendar un paquete, considerar: los menús digitales son para negocios de comida, el sistema de citas para negocios que trabajan con reservas (consultorios, spas, barberías, talleres), y los e-commerce para quienes venden productos con carrito y catálogo.

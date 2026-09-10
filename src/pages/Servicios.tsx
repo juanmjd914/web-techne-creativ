@@ -1,31 +1,11 @@
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { motion } from 'motion/react'
-import { Code2, TrendingUp, Share2, BookOpen, Palette, ShoppingCart, Megaphone, ArrowRight, CheckCircle, Layout, Sparkles } from 'lucide-react'
+import { TrendingUp, Share2, BookOpen, Palette, Megaphone, ArrowRight, CheckCircle, Sparkles } from 'lucide-react'
 import { CTASection } from '../components/CTASection'
 import { SEOHead } from '../components/SEOHead'
 
 const SERVICES = [
-  {
-    icon: <Code2 size={24} />,
-    title: 'Páginas Web Corporativas',
-    desc: 'Sitios web profesionales que representan tu marca y generan confianza en tus clientes.',
-    features: ['Diseño responsive adaptado a tu marca', 'Optimización SEO desde el inicio', 'Velocidad y rendimiento optimizados', 'Formulario de contacto integrado', 'Panel de administración (si aplica)'],
-    from: 'Desde $250.000 CLP',
-  },
-  {
-    icon: <ShoppingCart size={24} />,
-    title: 'Tiendas Online',
-    desc: 'Plataformas de venta online completas con carrito, pagos seguros y gestión de inventario.',
-    features: ['Catálogo de hasta 20 productos iniciales', 'Integración con pasarelas de pago', 'Panel de administración de pedidos', 'Sistema de cupones y descuentos', 'Notificaciones automáticas al cliente'],
-    from: 'Desde $500.000 CLP',
-  },
-  {
-    icon: <Layout size={24} />,
-    title: 'Landing Pages',
-    desc: 'Páginas de aterrizaje de una sola pantalla, diseñadas para captar clientes y generar ventas rápidamente.',
-    features: ['Diseño atractivo orientado a conversión', 'Sección hero con llamada a la acción', 'Formulario de contacto o WhatsApp directo', 'Optimización SEO básica incluida', 'Entrega en 5 días hábiles'],
-    from: 'Desde $120.000 CLP',
-  },
   {
     icon: <Sparkles size={24} />,
     title: 'Catálogos Digitales',
@@ -84,7 +64,72 @@ const PACKAGES = [
       'SEO básico',
       '100% responsive (móvil y escritorio)',
       'Optimizado para velocidad',
+      'Hosting y dominio gratis por 1 año',
       'Entrega en 3–5 días',
+    ],
+    highlight: false,
+    cta: 'Cotizar',
+    desde: false,
+  },
+  {
+    name: 'Landing Page Premium',
+    price: '$300.000',
+    period: '',
+    desc: 'Landing con animaciones, diseño cinematográfico y alto impacto visual.',
+    features: [
+      'Video cinematográfico de fondo y alto impacto visual',
+      'Diseño personalizado',
+      'Diseño premium con animaciones',
+      'Efectos scroll reveal',
+      '15 fotos de productos / servicios',
+      'Botones de redes sociales',
+      'Botón WhatsApp flotante',
+      'SEO básico',
+      '100% responsive (móvil y escritorio)',
+      'Optimizado para velocidad',
+      'Hosting y dominio gratis por 1 año',
+      'Entrega en 5–7 días',
+    ],
+    highlight: false,
+    cta: 'Cotizar',
+    desde: false,
+  },
+  {
+    name: 'Sitio Web Corporativo',
+    price: '$450.000',
+    period: '',
+    desc: 'Sitio web completo de varias secciones para empresas y negocios.',
+    features: [
+      'Diseño premium personalizado',
+      'Video cinematográfico / imagen de alto impacto',
+      'Múltiples páginas (Inicio, Servicios, Nosotros, Contacto)',
+      'Formularios de contacto y cotización',
+      'Botones de redes sociales',
+      'Botón WhatsApp flotante',
+      'SEO básico',
+      '100% responsive (móvil y escritorio)',
+      'Optimizado para velocidad',
+      'Hosting y dominio gratis por 1 año',
+      'Entrega en 7–10 días',
+    ],
+    highlight: false,
+    cta: 'Cotizar',
+    desde: false,
+  },
+  {
+    name: 'Menú Digital Básico',
+    price: '$160.000',
+    period: '',
+    desc: 'Menú interactivo para que tus clientes pidan directo por WhatsApp.',
+    features: [
+      'Menú con categorías y filtros',
+      'Diseño personalizado',
+      '30 productos con fotos, descripción y precios',
+      'Botón WhatsApp flotante para pedidos',
+      'Botones de redes sociales',
+      '100% responsive (móvil y escritorio)',
+      'Hosting y dominio gratis por 1 año',
+      'Entrega en 5–7 días',
     ],
     highlight: false,
     cta: 'Cotizar',
@@ -94,7 +139,7 @@ const PACKAGES = [
     name: 'Menú Digital Premium',
     price: '$400.000',
     period: '',
-    desc: 'Menú interactivo con QR, panel admin e IA integrada para generar descripciones.',
+    desc: 'Menú interactivo con QR, panel admin y opción de IA para generar descripciones.',
     features: [
       'Menú con categorías y filtros',
       '30 productos con fotos, descripción y precios',
@@ -102,13 +147,40 @@ const PACKAGES = [
       'Panel admin para editar productos',
       'Código QR incluido',
       'Integración con WhatsApp para pedidos',
-      'IA integrada para generar descripciones de productos',
+      'Opcional: IA para descripciones de productos y ofertas',
       'Botones de redes sociales',
       '100% responsive (móvil y escritorio)',
+      'Hosting y dominio gratis por 1 año',
       'Entrega en 10–15 días',
     ],
     highlight: true,
     cta: 'El más elegido',
+    desde: false,
+  },
+  {
+    name: 'Sistema de Citas Online',
+    price: '$700.000',
+    period: '',
+    desc: 'Sitio web con agenda online integrada, gestión de citas y notificaciones por correo.',
+    features: [
+      'Diseño premium personalizado',
+      'Video cinematográfico / imagen de alto impacto',
+      'Múltiples páginas (Inicio, Servicios, Nosotros, Contacto)',
+      'Formulario de reserva de citas',
+      'Panel admin con calendario',
+      'Notificaciones por correo',
+      'Gestión de horarios y disponibilidad',
+      'Formularios de contacto y cotización',
+      'Botones de redes sociales',
+      'Botón WhatsApp flotante',
+      'SEO básico',
+      '100% responsive (móvil y escritorio)',
+      'Optimizado para velocidad',
+      'Hosting y dominio gratis por 1 año',
+      'Entrega en 10–15 días',
+    ],
+    highlight: false,
+    cta: 'Cotizar',
     desde: false,
   },
   {
@@ -130,7 +202,39 @@ const PACKAGES = [
       'SEO básico',
       '100% responsive (móvil y escritorio)',
       'Optimizado para velocidad',
+      'Hosting y dominio gratis por 1 año',
       'Entrega en 10–15 días',
+    ],
+    highlight: false,
+    cta: 'Cotizar',
+    desde: true,
+  },
+  {
+    name: 'E-commerce Completo',
+    price: '$800.000',
+    period: '',
+    desc: 'Tienda online full-stack con pagos reales, autenticación, panel admin y correos automáticos.',
+    features: [
+      'Diseño premium personalizado',
+      'Video cinematográfico / imagen de alto impacto',
+      'Múltiples páginas (Inicio, Tienda, Nosotros, Cuenta, Soporte)',
+      'Panel admin: productos, pedidos, stock y ventas',
+      'Catálogo con filtros por categoría',
+      'Integración con pasarelas de pago',
+      '20 productos con fotos, descripción y precios',
+      'Registro e inicio de sesión de administrador',
+      'Registro e inicio de sesión para clientes',
+      'Carrito de compras',
+      'Múltiples métodos de pago (efectivo o transferencias)',
+      'Formularios de suscripción',
+      'Checkout por WhatsApp',
+      'Botones de redes sociales',
+      'Botón WhatsApp flotante',
+      'SEO básico',
+      '100% responsive (móvil y escritorio)',
+      'Optimizado para velocidad',
+      'Hosting y dominio gratis por 1 año',
+      'Entrega en 20–30 días',
     ],
     highlight: false,
     cta: 'Cotizar',
@@ -138,14 +242,62 @@ const PACKAGES = [
   },
 ]
 
+// Datos estructurados generados desde PACKAGES: precios y contenidos no se pueden desincronizar
+const OFFER_CATALOG_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Diseño y desarrollo web',
+  provider: {
+    '@type': 'Organization',
+    name: 'Techne Creativ',
+    url: 'https://technecreativ.com',
+  },
+  areaServed: { '@type': 'Country', name: 'Chile' },
+  url: 'https://technecreativ.com/servicios',
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Paquetes de diseño y desarrollo web',
+    itemListElement: PACKAGES.map(p => ({
+      '@type': 'Offer',
+      name: p.name,
+      description: `${p.desc} Incluye: ${p.features.join('; ')}.`,
+      price: p.price.replace(/[$.]/g, ''),
+      priceCurrency: 'CLP',
+      availability: 'https://schema.org/InStock',
+      url: 'https://technecreativ.com/agendar-cita',
+      itemOffered: {
+        '@type': 'Service',
+        name: p.name,
+        description: p.desc,
+        serviceType: 'Diseño y desarrollo web',
+        provider: { '@type': 'Organization', name: 'Techne Creativ' },
+        areaServed: { '@type': 'Country', name: 'Chile' },
+      },
+    })),
+  },
+}
+
+const BREADCRUMB_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://technecreativ.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Servicios', item: 'https://technecreativ.com/servicios' },
+  ],
+}
+
 export function Servicios() {
   return (
     <main style={{ paddingTop: 68 }}>
       <SEOHead
-        title="Servicios — Diseño Web, Marketing y Más"
-        description="Landing pages, e-commerce, menús digitales, branding y community management. Proyectos web profesionales desde $150.000 CLP. Cotiza gratis."
+        title="Servicios y Paquetes Web"
+        description="8 paquetes con precio y alcance definidos: landing pages, sitios corporativos, menús digitales, sistema de citas y tiendas online. Desde $150.000 CLP, con opción de pago en cuotas sin intereses."
         path="/servicios"
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(OFFER_CATALOG_LD)}</script>
+        <script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>
+      </Helmet>
       {/* Hero */}
       <section style={{ padding: '72px 24px 60px', background: 'linear-gradient(135deg, #F0FDFF 0%, #E0F7FA 100%)', textAlign: 'center' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
@@ -263,6 +415,89 @@ export function Servicios() {
           <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--tc-muted)' }}>
             ¿Necesitas algo personalizado? <Link to="/contacto" style={{ color: 'var(--tc-primary)', fontWeight: 600, textDecoration: 'none' }}>Cuéntanos tu proyecto</Link>
           </p>
+        </div>
+      </section>
+
+      {/* Plan Techne Flexible */}
+      <section style={{ padding: '80px 24px', background: '#fff' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.45 }}
+            style={{ textAlign: 'center', marginBottom: 40 }}
+          >
+            <p className="section-eyebrow">Plan Techne Flexible</p>
+            <h2 className="section-title" style={{ marginTop: 8 }}>Tu proyecto puede empezar hoy</h2>
+            <p className="section-subtitle" style={{ marginTop: 14, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}>
+              Sabemos que invertir en tu presencia digital de una sola vez no siempre es posible. Por eso existe el
+              Plan Techne Flexible: divides el pago en tres partes, sin intereses ni recargos, y tu sitio sale publicado
+              antes de que termines de pagarlo.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.45, delay: 0.1 }}
+            style={{
+              background: '#fff',
+              border: '1px solid var(--tc-border)',
+              borderRadius: 20,
+              padding: 36,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 6 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--tc-text)', margin: 0 }}>Veámoslo con un ejemplo real</h3>
+              <span style={{
+                fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                color: 'var(--tc-primary)', background: '#E0F7FA', padding: '5px 12px', borderRadius: 999,
+              }}>
+                E-commerce Básico · desde $600.000
+              </span>
+            </div>
+            <p style={{ fontSize: 14, color: 'var(--tc-muted)', marginBottom: 26 }}>
+              Digamos que eliges una tienda online básica. Así quedaría tu pago, paso a paso:
+            </p>
+
+            <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {[
+                { n: '1', t: 'Pagas $300.000 para empezar (50%)', d: 'Con ese primer pago arrancamos de inmediato: diseño, desarrollo, carga de tus productos, todo.' },
+                { n: '2', t: 'Publicamos tu tienda', d: 'Cuando está lista, sale online. Ya puedes venderle a tus clientes mientras terminas de pagarla.' },
+                { n: '3', t: 'Pagas $150.000 a los 30 días (25%)', d: 'Sin intereses, sin recargos, sin sorpresas. El monto es exactamente ese.' },
+                { n: '4', t: 'Pagas $150.000 a los 60 días (25%)', d: 'Al completar el 100% recibes las credenciales de tu dominio y hosting. Son tuyas, a tu nombre.' },
+              ].map(step => (
+                <li key={step.n} style={{ display: 'grid', gridTemplateColumns: '38px 1fr', gap: 16, alignItems: 'start' }}>
+                  <span style={{
+                    width: 38, height: 38, borderRadius: '50%', background: 'var(--tc-primary)', color: '#fff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15,
+                  }}>
+                    {step.n}
+                  </span>
+                  <div>
+                    <h4 style={{ fontSize: 16, fontWeight: 700, color: 'var(--tc-text)', margin: '0 0 3px' }}>{step.t}</h4>
+                    <p style={{ fontSize: 14, color: 'var(--tc-muted)', margin: 0, lineHeight: 1.5 }}>{step.d}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            <p style={{
+              marginTop: 26, paddingTop: 18, borderTop: '1px solid var(--tc-border)',
+              fontSize: 13, color: 'var(--tc-muted)', fontStyle: 'italic', lineHeight: 1.55,
+            }}>
+              El Plan Techne Flexible aplica sobre el precio regular del paquete que elijas.
+            </p>
+          </motion.div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
+            <Link to="/#demo-gratis" className="btn-teal">
+              Solicitar mi demo gratis <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </section>
 
