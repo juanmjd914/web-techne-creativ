@@ -349,7 +349,7 @@ export function Servicios() {
                   {s.features.map(f => <li key={f}>{f}</li>)}
                 </ul>
                 <div style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid var(--tc-border)', textAlign: 'right' }}>
-                  <Link to="/agendar-cita" style={{ fontSize: 13, color: 'var(--tc-primary)', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <Link to="/agendar-cita" style={{ fontSize: 13, color: 'var(--tc-primary-dark)', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                     Cotizar <ArrowRight size={14} />
                   </Link>
                 </div>
@@ -379,7 +379,7 @@ export function Servicios() {
                 transition={{ duration: 0.45 }}
                 className={p.highlight ? 'pkg-highlighted' : undefined}
                 style={{
-                  background: p.highlight ? 'linear-gradient(135deg, #00BCD4, #0097A7)' : '#fff',
+                  background: p.highlight ? 'linear-gradient(135deg, var(--tc-primary-dark), var(--tc-primary-darker))' : '#fff',
                   border: p.highlight ? 'none' : '1px solid var(--tc-border)',
                   borderRadius: 20,
                   padding: 32,
@@ -390,10 +390,10 @@ export function Servicios() {
                   transform: p.highlight ? 'scale(1.03)' : 'scale(1)',
                 }}
               >
-                {p.highlight && <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.8)' }}>Más popular</span>}
+                {p.highlight && <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.9)' }}>Más popular</span>}
                 <div>
                   <h3 style={{ fontSize: 20, fontWeight: 800, color: p.highlight ? '#fff' : 'var(--tc-text)', marginBottom: 4 }}>{p.name}</h3>
-                  <p style={{ fontSize: 13, color: p.highlight ? 'rgba(255,255,255,0.8)' : 'var(--tc-muted)' }}>{p.desc}</p>
+                  <p style={{ fontSize: 13, color: p.highlight ? 'rgba(255,255,255,0.9)' : 'var(--tc-muted)' }}>{p.desc}</p>
                 </div>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {p.features.map(f => (
@@ -404,10 +404,10 @@ export function Servicios() {
                   ))}
                 </ul>
                 <div style={{ borderTop: `1px solid ${p.highlight ? 'rgba(255,255,255,0.25)' : 'var(--tc-border)'}`, paddingTop: 20, marginTop: 'auto' }}>
-                  {p.desde && <span style={{ fontSize: 12, fontWeight: 600, color: p.highlight ? 'rgba(255,255,255,0.7)' : 'var(--tc-muted)', display: 'block', marginBottom: 2 }}>Desde</span>}
+                  {p.desde && <span style={{ fontSize: 12, fontWeight: 600, color: p.highlight ? 'rgba(255,255,255,0.85)' : 'var(--tc-muted)', display: 'block', marginBottom: 2 }}>Desde</span>}
                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, marginBottom: 16 }}>
                     <span style={{ fontSize: 36, fontWeight: 900, color: p.highlight ? '#fff' : 'var(--tc-text)', lineHeight: 1 }}>{p.price}</span>
-                    <span style={{ fontSize: 14, color: p.highlight ? 'rgba(255,255,255,0.7)' : 'var(--tc-muted)', paddingBottom: 4 }}>CLP</span>
+                    <span style={{ fontSize: 14, color: p.highlight ? 'rgba(255,255,255,0.85)' : 'var(--tc-muted)', paddingBottom: 4 }}>CLP</span>
                   </div>
                   <Link
                     to="/agendar-cita"
@@ -421,7 +421,7 @@ export function Servicios() {
             ))}
           </div>
           <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--tc-muted)' }}>
-            ¿Necesitas algo personalizado? <Link to="/contacto" style={{ color: 'var(--tc-primary)', fontWeight: 600, textDecoration: 'none' }}>Cuéntanos tu proyecto</Link>
+            ¿Necesitas algo personalizado? <Link to="/contacto" style={{ color: 'var(--tc-primary-dark)', fontWeight: 600, textDecoration: 'none' }}>Cuéntanos tu proyecto</Link>
           </p>
         </div>
       </section>
@@ -462,7 +462,7 @@ export function Servicios() {
               <h3 style={{ fontSize: 20, fontWeight: 800, color: 'var(--tc-text)', margin: 0 }}>Veámoslo con un ejemplo real</h3>
               <span style={{
                 fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-                color: 'var(--tc-primary)', background: '#E0F7FA', padding: '5px 12px', borderRadius: 999,
+                color: 'var(--tc-primary-dark)', background: '#E0F7FA', padding: '5px 12px', borderRadius: 999,
               }}>
                 E-commerce Básico · desde $600.000
               </span>
@@ -480,7 +480,7 @@ export function Servicios() {
               ].map(step => (
                 <li key={step.n} style={{ display: 'grid', gridTemplateColumns: '38px 1fr', gap: 16, alignItems: 'start' }}>
                   <span style={{
-                    width: 38, height: 38, borderRadius: '50%', background: 'var(--tc-primary)', color: '#fff',
+                    width: 38, height: 38, borderRadius: '50%', background: 'var(--tc-primary-dark)', color: '#fff',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15,
                   }}>
                     {step.n}

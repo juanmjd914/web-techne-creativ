@@ -210,8 +210,9 @@ export function AgendarCita() {
                   { label: 'WhatsApp *', key: 'whatsapp' as const, type: 'tel', placeholder: '+56 9 1234 5678' },
                 ].map(f => (
                   <div key={f.key}>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>{f.label}</label>
+                    <label htmlFor={`cita-${f.key}`} style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>{f.label}</label>
                     <input
+                      id={`cita-${f.key}`}
                       type={f.type}
                       value={form[f.key]}
                       onChange={set(f.key)}
@@ -224,16 +225,17 @@ export function AgendarCita() {
                   </div>
                 ))}
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Servicio de interés *</label>
-                  <select value={form.service} onChange={set('service')} required style={inputStyle}>
+                  <label htmlFor="cita-service" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Servicio de interés *</label>
+                  <select id="cita-service" value={form.service} onChange={set('service')} required style={inputStyle}>
                     <option value="">Seleccionar...</option>
                     {SERVICES_FOR_BOOKING.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Fecha preferida *</label>
+                    <label htmlFor="cita-date" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Fecha preferida *</label>
                     <input
+                      id="cita-date"
                       type="date"
                       value={form.date}
                       onChange={set('date')}
@@ -246,8 +248,8 @@ export function AgendarCita() {
                     {isDaySunday && <p style={{ fontSize: 12, color: '#EF4444', margin: '4px 0 0' }}>No atendemos los domingos</p>}
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Hora preferida *</label>
-                    <select value={form.time} onChange={set('time')} required style={inputStyle} disabled={!form.date || isDaySunday}>
+                    <label htmlFor="cita-time" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Hora preferida *</label>
+                    <select id="cita-time" value={form.time} onChange={set('time')} required style={inputStyle} disabled={!form.date || isDaySunday}>
                       <option value="">{!form.date ? 'Elige fecha primero' : 'Seleccionar...'}</option>
                       {availableSlots.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>

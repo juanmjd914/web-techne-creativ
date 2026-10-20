@@ -44,10 +44,10 @@ export function Navbar() {
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
           <img
-            src={solid ? '/logo-dark.png' : '/logo.png'}
+            src={solid ? '/logo-dark.webp' : '/logo.webp'}
             alt="Techne Creativ"
-            width={solid ? 1200 : 1000}
-            height={solid ? 200 : 300}
+            width={solid ? 432 : 400}
+            height={solid ? 72 : 120}
             style={{ height: 36, width: 'auto', transition: 'opacity 0.3s' }}
           />
         </Link>
@@ -65,7 +65,7 @@ export function Navbar() {
                   fontFamily: 'var(--font)',
                   fontSize: 14,
                   fontWeight: 500,
-                  color: isActive ? 'var(--tc-primary)' : solid ? '#374151' : 'rgba(255,255,255,0.9)',
+                  color: isActive ? 'var(--tc-primary-dark)' : solid ? '#374151' : 'rgba(255,255,255,0.9)',
                   background: isActive ? 'var(--tc-primary-light)' : 'transparent',
                   textDecoration: 'none',
                   transition: 'color 0.2s, background 0.2s',
@@ -109,7 +109,7 @@ export function Navbar() {
                     fontFamily: 'var(--font)',
                     fontSize: 15,
                     fontWeight: 500,
-                    color: isActive ? 'var(--tc-primary)' : '#374151',
+                    color: isActive ? 'var(--tc-primary-dark)' : '#374151',
                     background: isActive ? 'var(--tc-primary-light)' : 'transparent',
                     textDecoration: 'none',
                   })}

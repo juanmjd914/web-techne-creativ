@@ -34,6 +34,9 @@ const ROUTES = [
   { path: '/proceso', out: 'proceso.html' },
   { path: '/contacto', out: 'contacto.html' },
   { path: '/agendar-cita', out: 'agendar-cita.html' },
+  // Cualquier URL inexistente cae en la ruta "*" de React (NotFound); el
+  // servidor la entrega con status 404 (ver server/index.ts).
+  { path: '/__pagina-no-encontrada', out: '404.html' },
 ]
 
 async function waitForServer(url, timeoutMs = 15000) {

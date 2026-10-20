@@ -126,7 +126,7 @@ export function Proceso() {
                     {s.icon}
                     <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--tc-text)' }}>{s.title}</span>
                   </div>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--tc-primary)', background: 'var(--tc-primary-light)', padding: '3px 10px', borderRadius: 12 }}>{s.duration}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--tc-primary-dark)', background: 'var(--tc-primary-light)', padding: '3px 10px', borderRadius: 12 }}>{s.duration}</span>
                 </div>
                 <p style={{ fontSize: 14, color: 'var(--tc-muted)', lineHeight: 1.75, marginBottom: 16 }}>{s.desc}</p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -164,7 +164,7 @@ export function Proceso() {
                 style={{ background: '#fff', border: '1px solid var(--tc-border)', borderRadius: 12, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}
               >
                 <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--tc-text)' }}>{t.type}</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--tc-primary)', whiteSpace: 'nowrap' }}>{t.time}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--tc-primary-dark)', whiteSpace: 'nowrap' }}>{t.time}</span>
               </motion.div>
             ))}
           </div>

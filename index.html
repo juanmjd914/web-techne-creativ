@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <!-- Favicon = isotipo recortado del logo oficial (public/logo.png).
+         Google pide un icono cuadrado de minimo 48px para los resultados de busqueda. -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!--
       Title, meta description, robots, canonical, og:* y twitter:* NO van aqui
       hardcodeados — cada pagina los define via <SEOHead> (react-helmet-async).
@@ -14,10 +18,9 @@
     -->
     <meta name="google-site-verification" content="EJ3YV1p3eNy0qNCbbow4gRaZesrPvAVJZuQfGb59MYM" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=optional" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=optional" rel="stylesheet" /></noscript>
+    <!-- Fuente alojada en el propio sitio (ver @font-face en src/index.css).
+         Se precarga solo el subconjunto latin, que cubre todo el espanol. -->
+    <link rel="preload" href="/fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Schema.org: Organization -->
     <script type="application/ld+json">
@@ -73,20 +76,20 @@
     </script>
   </head>
   <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T64T3XTF"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
     <!--
-      GTM + GA4 diferidos hasta la primera interaccion real del usuario
+      GA4 diferido hasta la primera interaccion real del usuario
       (scroll/click/touch/tecla) o, como respaldo, a los 5s de inactividad
       -- asi no compiten por CPU/red con el contenido inicial. PageSpeed
       marcaba esto como "381 KiB de JS sin usar" (los ~572 KiB de GTM/GA4
       se parsean pero casi nada se ejecuta durante la carga). No pierde
       datos de visitas: sigue cargando igual, solo un poco despues.
+
+      GTM (GTM-T64T3XTF) se quito el 2026-10-20: el contenedor estaba vacio
+      (sin etiquetas) y solo sumaba JS sin usar. GA4 se carga directo con
+      gtag. Si algun dia se usa GTM, volver a agregar su snippet aca.
     -->
     <script>
       (function () {
@@ -94,17 +97,6 @@
         function loadAnalytics() {
           if (loaded) return
           loaded = true
-          ;(function (w, d, s, l, i) {
-            w[l] = w[l] || []
-            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
-            var f = d.getElementsByTagName(s)[0]
-            var j = d.createElement(s)
-            var dl = l != 'dataLayer' ? '&l=' + l : ''
-            j.async = true
-            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl
-            f.parentNode.insertBefore(j, f)
-          })(window, document, 'script', 'dataLayer', 'GTM-T64T3XTF')
-
           var gaScript = document.createElement('script')
           gaScript.async = true
           gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-EVVYDENNHQ'

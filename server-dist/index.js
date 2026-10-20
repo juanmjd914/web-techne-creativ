@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { contactRouter } from './routes/contact.js';
 import { appointmentsRouter } from './routes/appointments.js';
@@ -106,8 +107,33 @@ app.use(express.static(dist, {
             res.setHeader('Cache-Control', 'no-cache');
     },
 }));
-app.get('/{*path}', (_req, res) => {
-    res.sendFile(path.join(dist, 'index.html'));
+// Rutas que existen solo del lado del cliente, sin HTML prerenderizado propio.
+const SPA_ROUTES = new Set(['/', '/admin']);
+const has404Page = existsSync(path.join(dist, '404.html'));
+// Antes este comodin devolvia index.html con 200 para CUALQUIER URL: Google
+// las veia como paginas reales ("soft 404" en Search Console) y PageSpeed
+// recibia HTML al pedir /.well-known/ai-catalog.json. Ahora solo las rutas
+// reales responden 200; el resto da 404 de verdad.
+app.get('/{*path}', (req, res) => {
+    const p = req.path.toLowerCase().replace(/\/+$/, '') || '/';
+    if (SPA_ROUTES.has(p)) {
+        res.sendFile(path.join(dist, 'index.html'));
+        return;
+    }
+    res.status(404);
+    if (p.startsWith('/api/')) {
+        res.json({ error: 'No encontrado' });
+        return;
+    }
+    // Archivos que no existen (.json, .png, .php...): 404 plano, sin HTML.
+    if (path.extname(p)) {
+        res.type('text/plain').send('Not found');
+        return;
+    }
+    // Paginas que no existen: 404.html prerenderizado (NotFound). Si el
+    // prerender fallo en el build, el HTML base sirve igual: React muestra
+    // NotFound al cargar.
+    res.sendFile(path.join(dist, has404Page ? '404.html' : 'index.html'));
 });
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`[Techne Creativ] Servidor en puerto ${PORT}`);

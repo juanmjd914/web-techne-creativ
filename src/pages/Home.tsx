@@ -120,7 +120,7 @@ function ServicesPreview() {
               <div className="service-icon-wrap">{s.icon}</div>
               <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--tc-text)' }}>{s.title}</h3>
               <p style={{ fontSize: 13, color: 'var(--tc-muted)', lineHeight: 1.65 }}>{s.desc}</p>
-              <Link to={s.link} style={{ fontSize: 13, color: 'var(--tc-primary)', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4, marginTop: 'auto' }}>
+              <Link to={s.link} style={{ fontSize: 13, color: 'var(--tc-primary-dark)', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4, marginTop: 'auto' }}>
                 Saber más <ArrowRight size={14} />
               </Link>
             </motion.div>
@@ -266,8 +266,9 @@ function DemoGratisSection() {
                 { label: 'Correo electrónico (opcional)', key: 'email' as const, type: 'email', placeholder: 'tu@email.com' },
               ].map(f => (
                 <div key={f.key}>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>{f.label}</label>
+                  <label htmlFor={`demo-${f.key}`} style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>{f.label}</label>
                   <input
+                    id={`demo-${f.key}`}
                     type={f.type}
                     value={form[f.key]}
                     onChange={set(f.key)}
@@ -278,15 +279,16 @@ function DemoGratisSection() {
                 </div>
               ))}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Tipo de proyecto *</label>
-                <select value={form.tipo_proyecto} onChange={set('tipo_proyecto')} required style={inputStyle}>
+                <label htmlFor="demo-tipo_proyecto" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Tipo de proyecto *</label>
+                <select id="demo-tipo_proyecto" value={form.tipo_proyecto} onChange={set('tipo_proyecto')} required style={inputStyle}>
                   <option value="">Seleccionar...</option>
                   {SERVICES_FOR_BOOKING.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Mensaje (opcional)</label>
+                <label htmlFor="demo-mensaje" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Mensaje (opcional)</label>
                 <textarea
+                  id="demo-mensaje"
                   value={form.mensaje}
                   onChange={set('mensaje')}
                   placeholder="Cuéntanos brevemente sobre tu proyecto"
@@ -318,12 +320,12 @@ const STATS = [
 
 function Stats() {
   return (
-    <section style={{ padding: '60px 24px', background: 'var(--tc-primary)' }}>
+    <section style={{ padding: '60px 24px', background: 'var(--tc-primary-dark)' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 32 }}>
         {STATS.map(s => (
           <div key={s.label} style={{ textAlign: 'center' }}>
             <p style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 900, color: '#fff', margin: 0, lineHeight: 1 }}>{s.value}</p>
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 8 }}>{s.label}</p>
+            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)', marginTop: 8 }}>{s.label}</p>
           </div>
         ))}
       </div>
@@ -424,18 +426,18 @@ function ProcessPreview() {
                     display: 'block',
                     textAlign: 'center',
                     padding: '10px 16px',
-                    border: '1.5px solid var(--tc-primary)',
+                    border: '1.5px solid var(--tc-primary-dark)',
                     borderRadius: 10,
                     fontSize: 13.5,
                     fontWeight: 600,
-                    color: 'var(--tc-primary)',
+                    color: 'var(--tc-primary-dark)',
                     textDecoration: 'none',
                     transition: 'background 0.2s, color 0.2s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'var(--tc-primary)'; (e.currentTarget as HTMLAnchorElement).style.color = '#fff' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; (e.currentTarget as HTMLAnchorElement).style.color = 'var(--tc-primary)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'var(--tc-primary-dark)'; (e.currentTarget as HTMLAnchorElement).style.color = '#fff' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; (e.currentTarget as HTMLAnchorElement).style.color = 'var(--tc-primary-dark)' }}
                 >
-                  Más información
+                  Conoce la etapa de {s.title}
                 </Link>
               </div>
             </motion.div>

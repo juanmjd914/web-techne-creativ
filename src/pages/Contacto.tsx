@@ -85,7 +85,7 @@ export function Contacto() {
                     {c.icon}
                   </div>
                   <div>
-                    <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--tc-primary)', letterSpacing: '0.06em', textTransform: 'uppercase', margin: 0 }}>{c.label}</p>
+                    <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--tc-primary-dark)', letterSpacing: '0.06em', textTransform: 'uppercase', margin: 0 }}>{c.label}</p>
                     {c.href ? (
                       <a href={c.href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 14, color: 'var(--tc-text)', textDecoration: 'none', fontWeight: 500 }}>{c.value}</a>
                     ) : (
@@ -131,8 +131,9 @@ export function Contacto() {
                   { label: 'WhatsApp', key: 'whatsapp' as const, type: 'tel', placeholder: '+56 9 ...' },
                 ].map(f => (
                   <div key={f.key}>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>{f.label}</label>
+                    <label htmlFor={`contacto-${f.key}`} style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>{f.label}</label>
                     <input
+                      id={`contacto-${f.key}`}
                       type={f.type}
                       value={form[f.key]}
                       onChange={set(f.key)}
@@ -145,8 +146,9 @@ export function Contacto() {
                   </div>
                 ))}
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Servicio de interés</label>
+                  <label htmlFor="contacto-service" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Servicio de interés</label>
                   <select
+                    id="contacto-service"
                     value={form.service}
                     onChange={set('service')}
                     style={{ width: '100%', padding: '10px 14px', border: '1.5px solid var(--tc-border)', borderRadius: 8, fontSize: 14, fontFamily: 'var(--font)', outline: 'none', background: '#fff', boxSizing: 'border-box' }}
@@ -156,8 +158,9 @@ export function Contacto() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Mensaje *</label>
+                  <label htmlFor="contacto-message" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--tc-text)', marginBottom: 6 }}>Mensaje *</label>
                   <textarea
+                    id="contacto-message"
                     value={form.message}
                     onChange={set('message')}
                     placeholder="Cuéntanos sobre tu proyecto o consulta..."

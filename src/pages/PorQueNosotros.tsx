@@ -99,12 +99,12 @@ export function PorQueNosotros() {
       </section>
 
       {/* Stats */}
-      <section style={{ padding: '64px 24px', background: 'var(--tc-primary)' }}>
+      <section style={{ padding: '64px 24px', background: 'var(--tc-primary-dark)' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 32 }}>
           {STATS.map(s => (
             <div key={s.label} style={{ textAlign: 'center' }}>
               <p style={{ fontSize: 'clamp(36px, 5vw, 52px)', fontWeight: 900, color: '#fff', margin: 0, lineHeight: 1 }}>{s.value}</p>
-              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 8 }}>{s.label}</p>
+              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)', marginTop: 8 }}>{s.label}</p>
             </div>
           ))}
         </div>

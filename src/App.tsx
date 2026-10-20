@@ -11,6 +11,7 @@ const Proceso = lazy(() => import('./pages/Proceso').then(m => ({ default: m.Pro
 const Contacto = lazy(() => import('./pages/Contacto').then(m => ({ default: m.Contacto })))
 const AgendarCita = lazy(() => import('./pages/AgendarCita').then(m => ({ default: m.AgendarCita })))
 const Admin = lazy(() => import('./pages/Admin').then(m => ({ default: m.Admin })))
+const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -34,6 +35,7 @@ function Layout() {
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/agendar-cita" element={<AgendarCita />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
       {!isAdmin && <Footer />}
