@@ -1,0 +1,26 @@
+{
+  "/": {
+    "title": "Agencia de Marketing Digital en Rancagua, Chile",
+    "description": "Diseño web, marketing digital y publicidad para negocios en Chile y Venezuela. Landing pages, e-commerce y más. Cotiza gratis hoy."
+  },
+  "/servicios": {
+    "title": "Servicios y Paquetes Web",
+    "description": "8 paquetes con precio y alcance definidos: landing pages, sitios corporativos, menús digitales, sistema de citas y tiendas online. Desde $150.000 CLP, con opción de pago en cuotas sin intereses."
+  },
+  "/por-que-nosotros": {
+    "title": "¿Por qué Techne Creativ? Tu aliado digital",
+    "description": "Somos tu aliado digital en Chile y Venezuela. Trabajamos contigo para que tu negocio tenga presencia digital real que atrae clientes."
+  },
+  "/proceso": {
+    "title": "Nuestro Proceso de Trabajo",
+    "description": "Conoce cómo trabajamos en Techne Creativ: desde el briefing inicial hasta la entrega y soporte. Un proceso claro, transparente y orientado a resultados."
+  },
+  "/contacto": {
+    "title": "Contacto — Escríbenos",
+    "description": "¿Tienes un proyecto en mente? Escríbenos y te respondemos en menos de 24 horas. Atendemos en Chile y Venezuela."
+  },
+  "/agendar-cita": {
+    "title": "Agendar Cita Gratuita — Consultoría Digital",
+    "description": "Agenda una consultoría gratuita de 30 minutos por Google Meet. Analizamos tu negocio y te decimos exactamente qué necesitas para crecer digitalmente."
+  }
+}

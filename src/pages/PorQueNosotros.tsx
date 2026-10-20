@@ -54,11 +54,7 @@ const STATS = [
 export function PorQueNosotros() {
   return (
     <main style={{ paddingTop: 68 }}>
-      <SEOHead
-        title="¿Por qué Techne Creativ? Tu aliado digital"
-        description="Somos tu aliado digital en Chile y Venezuela. Trabajamos contigo para que tu negocio tenga presencia digital real que atrae clientes."
-        path="/por-que-nosotros"
-      />
+      <SEOHead path="/por-que-nosotros" />
       {/* Hero */}
       <section style={{ padding: '72px 24px 60px', background: 'linear-gradient(135deg, #F0FDFF 0%, #E0F7FA 100%)', textAlign: 'center' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>

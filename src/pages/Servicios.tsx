@@ -297,11 +297,7 @@ const BREADCRUMB_LD = {
 export function Servicios() {
   return (
     <main style={{ paddingTop: 68 }}>
-      <SEOHead
-        title="Servicios y Paquetes Web"
-        description="8 paquetes con precio y alcance definidos: landing pages, sitios corporativos, menús digitales, sistema de citas y tiendas online. Desde $150.000 CLP, con opción de pago en cuotas sin intereses."
-        path="/servicios"
-      />
+      <SEOHead path="/servicios" />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(OFFER_CATALOG_LD)}</script>
         <script type="application/ld+json">{JSON.stringify(BREADCRUMB_LD)}</script>

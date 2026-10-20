@@ -521,11 +521,7 @@ export function Home() {
 
   return (
     <main>
-      <SEOHead
-        title="Agencia de Marketing Digital en Rancagua, Chile"
-        description="Diseño web, marketing digital y publicidad para negocios en Chile y Venezuela. Landing pages, e-commerce y más. Cotiza gratis hoy."
-        path="/"
-      />
+      <SEOHead path="/" />
       <Hero />
       <ServicesPreview />
       <WhyUs />

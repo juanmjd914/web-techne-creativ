@@ -84,11 +84,7 @@ const TIMELINES = [
 export function Proceso() {
   return (
     <main style={{ paddingTop: 68 }}>
-      <SEOHead
-        title="Nuestro Proceso de Trabajo"
-        description="Conoce cómo trabajamos en Techne Creativ: desde el briefing inicial hasta la entrega y soporte. Un proceso claro, transparente y orientado a resultados."
-        path="/proceso"
-      />
+      <SEOHead path="/proceso" />
       {/* Hero */}
       <section style={{ padding: '72px 24px 60px', background: 'linear-gradient(135deg, #F0FDFF 0%, #E0F7FA 100%)', textAlign: 'center' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>

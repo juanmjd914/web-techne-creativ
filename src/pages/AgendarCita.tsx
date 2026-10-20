@@ -112,11 +112,7 @@ export function AgendarCita() {
 
   return (
     <main style={{ paddingTop: 68 }}>
-      <SEOHead
-        title="Agendar Cita Gratuita — Consultoría Digital"
-        description="Agenda una consultoría gratuita de 30 minutos por Google Meet. Analizamos tu negocio y te decimos exactamente qué necesitas para crecer digitalmente."
-        path="/agendar-cita"
-      />
+      <SEOHead path="/agendar-cita" />
       {/* Hero */}
       <section style={{ padding: '72px 24px 60px', background: 'linear-gradient(135deg, #F0FDFF 0%, #E0F7FA 100%)', textAlign: 'center' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>

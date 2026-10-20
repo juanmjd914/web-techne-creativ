@@ -1,17 +1,24 @@
 import { Helmet } from 'react-helmet-async'
+import SEO_PAGES from '../lib/seo-pages.json'
 
 const SITE = 'Techne Creativ'
 const DOMAIN = 'https://technecreativ.com'
-const OG_IMAGE = `${DOMAIN}/og-image.webp`
+// Logo completo (isotipo + "Téchnē Creativ") sobre blanco, como se pidio
+// para WhatsApp/Facebook/Instagram. JPG y no WebP por compatibilidad.
+const OG_IMAGE = `${DOMAIN}/og-image.jpg`
+
+export type SEOPath = keyof typeof SEO_PAGES
 
 interface SEOHeadProps {
-  title: string
-  description: string
-  path?: string
+  // Titulo y descripcion viven en src/lib/seo-pages.json: el servidor lee
+  // el mismo archivo para escribir las etiquetas en el HTML cuando el
+  // prerender falla (WhatsApp/Facebook no ejecutan JS).
+  path: SEOPath
   ogImage?: string
 }
 
-export function SEOHead({ title, description, path = '', ogImage = OG_IMAGE }: SEOHeadProps) {
+export function SEOHead({ path, ogImage = OG_IMAGE }: SEOHeadProps) {
+  const { title, description } = SEO_PAGES[path]
   const fullTitle = `${title} — ${SITE}`
   const url = `${DOMAIN}${path}`
 

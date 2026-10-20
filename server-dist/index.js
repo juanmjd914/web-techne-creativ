@@ -3,13 +3,14 @@ import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { contactRouter } from './routes/contact.js';
 import { appointmentsRouter } from './routes/appointments.js';
 import { adminRouter } from './routes/admin.js';
 import { briefRouter } from './routes/brief.js';
 import { demoRouter } from './routes/demo.js';
+import { loadSeoPages, injectSeo } from './lib/seoMeta.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -85,10 +86,25 @@ const PRERENDERED_ROUTES = ['servicios', 'por-que-nosotros', 'proceso', 'contact
 // Si el prerender fallo en el build (no rompe el deploy a proposito, ver
 // scripts/prerender.mjs), el .html de la ruta no existe: se sirve el HTML
 // base y React renderiza la pagina en el navegador. Sin este respaldo la
-// ruta respondia "Not Found" (paso en produccion el 2026-10-20).
+// ruta respondia "Not Found" (paso en produccion el 2026-10-20). En ese
+// caso ademas se escriben titulo/og:* en el HTML (ver lib/seoMeta.ts) para
+// que WhatsApp/Facebook sigan mostrando la tarjeta del enlace.
+const SEO_PAGES = loadSeoPages(path.join(__dirname, '..', 'src', 'lib', 'seo-pages.json'));
+const pageCache = new Map();
+function sendPage(res, route, file) {
+    let html = pageCache.get(route);
+    if (html === undefined) {
+        const source = existsSync(file) ? file : path.join(dist, 'index.html');
+        html = injectSeo(readFileSync(source, 'utf8'), SEO_PAGES, route);
+        pageCache.set(route, html);
+    }
+    res.setHeader('Cache-Control', 'no-cache');
+    res.type('html').send(html);
+}
+// "/" va antes de express.static, que si no serviria dist/index.html directo.
+app.get('/', (_req, res) => sendPage(res, '/', path.join(dist, 'index.html')));
 for (const route of PRERENDERED_ROUTES) {
-    const file = path.join(dist, `${route}.html`);
-    app.get(`/${route}`, (_req, res) => res.sendFile(existsSync(file) ? file : path.join(dist, 'index.html')));
+    app.get(`/${route}`, (_req, res) => sendPage(res, `/${route}`, path.join(dist, `${route}.html`)));
 }
 // Assets con hash en el nombre (/assets/index-CMYwAiSn.js) -- cualquier cambio
 // de contenido genera un nombre de archivo nuevo, asi que se pueden cachear
@@ -112,7 +128,8 @@ app.use(express.static(dist, {
             res.setHeader('Cache-Control', 'no-cache');
     },
 }));
-// Rutas que existen solo del lado del cliente, sin HTML prerenderizado propio.
+// Rutas que existen solo del lado del cliente, sin HTML prerenderizado propio
+// ("/" ya se atiende arriba; queda aca por si llega con barra o mayusculas).
 const SPA_ROUTES = new Set(['/', '/admin']);
 const has404Page = existsSync(path.join(dist, '404.html'));
 // Antes este comodin devolvia index.html con 200 para CUALQUIER URL: Google

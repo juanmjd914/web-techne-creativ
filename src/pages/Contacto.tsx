@@ -48,11 +48,7 @@ export function Contacto() {
 
   return (
     <main style={{ paddingTop: 68 }}>
-      <SEOHead
-        title="Contacto — Escríbenos"
-        description="¿Tienes un proyecto en mente? Escríbenos y te respondemos en menos de 24 horas. Atendemos en Chile y Venezuela."
-        path="/contacto"
-      />
+      <SEOHead path="/contacto" />
       {/* Hero */}
       <section style={{ padding: '72px 24px 60px', background: 'linear-gradient(135deg, #F0FDFF 0%, #E0F7FA 100%)', textAlign: 'center' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
