@@ -143,7 +143,10 @@ async function prerender() {
 // nuevo puede colgarse por escaneo de antivirus, permisos, o falta de
 // librerias del sistema) o cualquier otro paso se atasca, el build sigue
 // de largo en vez de quedar esperando para siempre.
-const TIMEOUT_MS = 60_000
+// 60s quedo corto en Hostinger con 7 rutas (2026-10-20: el build salio sin
+// ningun HTML prerenderizado). Como los snapshots se escriben recien al final,
+// un timeout pierde TODAS las rutas, no solo la ultima.
+const TIMEOUT_MS = 180_000
 const withTimeout = Promise.race([
   prerender(),
   new Promise((_, reject) =>

@@ -82,8 +82,13 @@ const dist = path.join(__dirname, '..', 'dist');
 // la URL declarada en canonical/sitemap/og:url son exactamente la misma,
 // sin ningun redirect 301 de por medio.
 const PRERENDERED_ROUTES = ['servicios', 'por-que-nosotros', 'proceso', 'contacto', 'agendar-cita'];
+// Si el prerender fallo en el build (no rompe el deploy a proposito, ver
+// scripts/prerender.mjs), el .html de la ruta no existe: se sirve el HTML
+// base y React renderiza la pagina en el navegador. Sin este respaldo la
+// ruta respondia "Not Found" (paso en produccion el 2026-10-20).
 for (const route of PRERENDERED_ROUTES) {
-    app.get(`/${route}`, (_req, res) => res.sendFile(path.join(dist, `${route}.html`)));
+    const file = path.join(dist, `${route}.html`);
+    app.get(`/${route}`, (_req, res) => res.sendFile(existsSync(file) ? file : path.join(dist, 'index.html')));
 }
 // Assets con hash en el nombre (/assets/index-CMYwAiSn.js) -- cualquier cambio
 // de contenido genera un nombre de archivo nuevo, asi que se pueden cachear
