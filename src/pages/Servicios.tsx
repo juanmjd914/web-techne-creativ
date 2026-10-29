@@ -53,7 +53,7 @@ const SERVICES = [
 const PACKAGES = [
   {
     name: 'Landing Básica',
-    price: '$150.000',
+    price: '$170.000',
     period: '',
     desc: 'Una página profesional para presentar tu negocio y captar clientes.',
     features: [
@@ -121,7 +121,7 @@ const PACKAGES = [
   },
   {
     name: 'Menú Digital Básico',
-    price: '$160.000',
+    price: '$190.000',
     period: '',
     desc: 'Menú interactivo para que tus clientes pidan directo por WhatsApp.',
     features: [

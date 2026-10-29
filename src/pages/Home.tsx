@@ -456,7 +456,7 @@ const FAQS = [
   { q: '¿Mi sitio web se verá bien en el celular?', a: 'Sí, todos los sitios están diseñados para funcionar correctamente en celulares, tablets y computadores.' },
   { q: '¿Mi sitio web aparecerá en Google?', a: 'El sitio se entrega con SEO básico para facilitar su indexación en Google. Para posicionar en los primeros resultados, se recomienda una estrategia SEO o campañas de publicidad.' },
   { q: '¿Me ayudan después de publicar mi sitio web?', a: 'Sí, puedes contar con soporte para resolver dudas o realizar mejoras.' },
-  { q: '¿Cuánto cuesta un sitio web?', a: 'El costo varía según el tipo de proyecto, necesidades para tu negocio o requerimientos. Los precios parten de los $150.000 CLP. Agenda una cita totalmente gratis y te damos una cotización sin compromiso.' },
+  { q: '¿Cuánto cuesta un sitio web?', a: 'El costo varía según el tipo de proyecto, necesidades para tu negocio o requerimientos. Los precios parten de los $170.000 CLP. Agenda una cita totalmente gratis y te damos una cotización sin compromiso.' },
   { q: '¿Puedo ver ejemplos de sus trabajos anteriores?', a: 'Sí, visita nuestro catálogo en technecreativ.com o solicítanos el portafolio por WhatsApp para ver proyectos similares al tuyo.' },
 ]
 
