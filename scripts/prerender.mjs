@@ -11,6 +11,7 @@
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs'
 import { homedir } from 'node:os'
+import { inspect } from 'node:util'
 import { dirname, extname, join, normalize } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import puppeteer from 'puppeteer'
@@ -80,13 +81,22 @@ function redact(text) {
     .replace(/\/home\/[^/\s]+/g, '~')
 }
 
+// Paso en el que iba el prerender y salida de error de Chromium: en Hostinger
+// el fallo llego como un objeto que no es Error ("[object Object]"), sin
+// stack, asi que hace falta saber DONDE fallo y que dijo el navegador.
+let stage = 'inicio'
+const chromeLog = []
+
 function writeFailureLog(err) {
   const lines = [
     `estado: FALLO — sitio publicado sin prerender`,
     `fecha: ${new Date().toISOString()}`,
     `node: ${process.version}`,
+    `paso: ${stage}`,
     '',
-    `error:\n${redact(err?.stack || err)}`,
+    `error:\n${redact(inspect(err, { depth: 4, showHidden: true, breakLength: 120 }))}`,
+    '',
+    `chromium (stderr):\n${redact(chromeLog.join('').slice(-3000)) || '(vacio)'}`,
   ]
   try {
     mkdirSync(distDir, { recursive: true })
@@ -137,6 +147,7 @@ function dedupeHead(html) {
 }
 
 async function prerender() {
+  stage = 'leer dist/index.html'
   indexHtml = readFileSync(join(distDir, 'index.html'))
 
   let browser
@@ -144,10 +155,17 @@ async function prerender() {
     // --no-sandbox / --disable-setuid-sandbox: casi siempre necesarios para
     // correr Chromium como root dentro de un contenedor de build (Hostinger,
     // GitHub Actions, etc.) — sin esto, Chromium no arranca en esos entornos.
+    // pipe: true habla con Chromium por stdin/stdout del proceso en vez de un
+    // WebSocket a 127.0.0.1. En el build de Hostinger nada local respondio
+    // (vite preview en localhost tampoco) y el fallo llego como un objeto
+    // sin stack, tipico de un error de WebSocket.
+    stage = 'arrancar Chromium'
     browser = await puppeteer.launch({
       headless: true,
+      pipe: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
     })
+    browser.process()?.stderr?.on('data', (d) => chromeLog.push(String(d)))
     console.log('[prerender] Chromium listo, prerenderizando', ROUTES.length, 'rutas')
 
     // Primero se capturan TODOS los snapshots en memoria y recien al final se
@@ -157,11 +175,17 @@ async function prerender() {
     // sirviendose como base para /servicios, /proceso, etc., y su <title>
     // colaba junto al correcto (bug real detectado y confirmado 2026-07-14).
     const snapshots = []
+    stage = 'abrir pestana'
     const page = await browser.newPage()
+    page.on('pageerror', (e) => chromeLog.push(`[pageerror] ${e?.message || e}\n`))
+    page.on('requestfailed', (r) => {
+      if (new URL(r.url()).origin === ORIGIN) chromeLog.push(`[requestfailed] ${r.url()} ${r.failure()?.errorText}\n`)
+    })
 
     // Todo lo que no sea del origen ficticio (GA4, gtag, etc.) se bloquea:
     // el snapshot es el DOM que arma React y no depende de terceros, y asi
     // el build no registra visitas falsas en Analytics.
+    stage = 'activar intercepcion'
     await page.setRequestInterception(true)
     page.on('request', (req) => {
       const url = new URL(req.url())
@@ -173,6 +197,7 @@ async function prerender() {
     for (const route of ROUTES) {
       const url = `${ORIGIN}${route.path}`
       console.log('[prerender]', route.path, '->', route.out)
+      stage = `cargar ${route.path}`
       await page.goto(url, { waitUntil: 'networkidle0', timeout: 20000 })
       let html = await page.content()
 
@@ -186,6 +211,7 @@ async function prerender() {
       snapshots.push({ outPath: join(distDir, route.out), html })
     }
 
+    stage = 'escribir snapshots'
     for (const { outPath, html } of snapshots) {
       mkdirSync(dirname(outPath), { recursive: true })
       writeFileSync(outPath, html, 'utf-8')
