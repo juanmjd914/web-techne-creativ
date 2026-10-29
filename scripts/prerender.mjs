@@ -10,51 +10,32 @@
 // en vez de dejar el deploy entero caido.
 
 import { spawn } from 'node:child_process'
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { writeFileSync, mkdirSync } from 'node:fs'
+import { createServer } from 'node:net'
 import { dirname, join } from 'node:path'
-import os from 'node:os'
 import { fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
 const distDir = join(root, 'dist')
-const PORT = 4610
+const viteBin = join(root, 'node_modules', 'vite', 'bin', 'vite.js')
 
-// Diagnostico TEMPORAL (2026-10-29): el prerender falla en el build de
-// Hostinger y su log no aparece en hPanel. Cada build deja el resultado en
-// dist/prerender-log.txt, que Express sirve como archivo estatico
-// (technecreativ.com/prerender-log.txt). Solo datos del entorno y el error,
-// nunca variables de entorno. Borrar cuando el prerender funcione en Hostinger.
-const previewLog = []
-
-async function writeDiagnostic(status, err) {
-  let chromePath = '(no se pudo resolver)'
-  try {
-    // En puppeteer 25 executablePath() devuelve una Promise.
-    chromePath = await puppeteer.executablePath()
-  } catch (e) {
-    chromePath = `(error al resolver: ${e.message})`
-  }
-  const lines = [
-    `estado: ${status}`,
-    `fecha: ${new Date().toISOString()}`,
-    `node: ${process.version}`,
-    `sistema: ${os.platform()} ${os.release()} ${os.arch()}`,
-    `memoria libre: ${Math.round(os.freemem() / 1048576)} MB de ${Math.round(os.totalmem() / 1048576)} MB`,
-    `chromium esperado en: ${chromePath}`,
-    `chromium existe: ${existsSync(chromePath)}`,
-    '',
-    err ? `error:\n${err.stack || err}` : 'error: (ninguno)',
-    '',
-    `salida de vite preview (stderr):\n${previewLog.join('').slice(-4000) || '(vacia)'}`,
-  ]
-  try {
-    mkdirSync(distDir, { recursive: true })
-    writeFileSync(join(distDir, 'prerender-log.txt'), lines.join('\n') + '\n', 'utf-8')
-  } catch (e) {
-    console.error('[prerender] no se pudo escribir prerender-log.txt:', e)
-  }
+// Puerto libre que asigna el sistema, no uno fijo. Con el 4610 fijo el
+// prerender fallaba en CADA build de Hostinger (diagnostico 2026-10-29:
+// "Port 4610 is already in use"): el servidor de build es compartido y el
+// puerto ya estaba tomado, probablemente por un vite preview huerfano de un
+// build anterior.
+function getFreePort() {
+  return new Promise((resolve, reject) => {
+    const srv = createServer()
+    srv.unref()
+    srv.on('error', reject)
+    srv.listen(0, '127.0.0.1', () => {
+      const { port } = srv.address()
+      srv.close(() => resolve(port))
+    })
+  })
 }
 
 // Archivos PLANOS (servicios.html, no servicios/index.html) a proposito:
@@ -112,19 +93,19 @@ function dedupeHead(html) {
 }
 
 async function prerender() {
+  const port = await getFreePort()
+  // Node lanza vite.js directo, sin shell: asi preview.kill() mata al
+  // servidor real y no solo a un envoltorio (ver comentario en el finally).
   const preview = spawn(
-    'npx',
-    ['vite', 'preview', '--port', String(PORT), '--strictPort'],
-    { cwd: root, shell: true, stdio: 'pipe' },
+    process.execPath,
+    [viteBin, 'preview', '--port', String(port), '--strictPort', '--host', '127.0.0.1'],
+    { cwd: root, stdio: 'pipe' },
   )
-  preview.stderr.on('data', (d) => {
-    previewLog.push(String(d))
-    process.stderr.write(`[vite preview] ${d}`)
-  })
+  preview.stderr.on('data', (d) => process.stderr.write(`[vite preview] ${d}`))
 
   let browser
   try {
-    await waitForServer(`http://localhost:${PORT}/`)
+    await waitForServer(`http://127.0.0.1:${port}/`)
 
     // --no-sandbox / --disable-setuid-sandbox: casi siempre necesarios para
     // correr Chromium como root dentro de un contenedor de build (Hostinger,
@@ -145,7 +126,7 @@ async function prerender() {
     const page = await browser.newPage()
 
     for (const route of ROUTES) {
-      const url = `http://localhost:${PORT}${route.path}`
+      const url = `http://127.0.0.1:${port}${route.path}`
       console.log('[prerender]', route.path, '->', route.out)
       await page.goto(url, { waitUntil: 'networkidle0', timeout: 20000 })
       let html = await page.content()
@@ -168,13 +149,12 @@ async function prerender() {
     console.log('[prerender] listo — dist/ actualizado con HTML prerenderizado por ruta')
   } finally {
     if (browser) await browser.close().catch(() => {})
-    // spawn con shell:true crea un proceso envoltorio (cmd.exe en Windows,
-    // /bin/sh en Linux) -- matar solo ese PID deja el vite/node de adentro
-    // huerfano, sirviendo el puerto para siempre y con eso el proceso de
-    // Node nunca termina de salir solo. Confirmado en produccion (Hostinger):
-    // el prerender terminaba bien (ver log "listo") pero el build se quedaba
-    // colgado 15+ minutos hasta que el propio Hostinger lo mataba por
-    // timeout y lo reportaba como "Failed to build the application".
+    // Antes se lanzaba con `npx` + shell:true, que crea un proceso envoltorio
+    // (cmd.exe en Windows, /bin/sh en Linux): matar ese PID dejaba el vite de
+    // adentro huerfano, ocupando el puerto para siempre. En Hostinger eso
+    // colgaba el build 15+ minutos ("Failed to build the application") y,
+    // con el puerto fijo, hacia fallar el prerender de los builds siguientes.
+    // Ahora el PID es el del propio vite, asi que el kill lo cierra de verdad.
     preview.kill('SIGKILL')
   }
 }
@@ -195,7 +175,7 @@ const withTimeout = Promise.race([
 ])
 
 withTimeout
-  .then(async () => {
+  .then(() => {
     // Salida forzada tambien en el camino feliz: aunque prerender() ya
     // intenta cerrar el navegador y matar el preview server, un proceso
     // hijo huerfano (shell wrapper de spawn) puede dejar el event loop de
@@ -203,13 +183,11 @@ withTimeout
     // log mostraba "[prerender] listo" pero el build igual se quedaba
     // colgado 15+ minutos hasta que Hostinger lo mataba por su propio
     // timeout y lo reportaba como "Failed to build the application".
-    await writeDiagnostic('OK — prerender completo')
     process.exit(0)
   })
-  .catch(async (err) => {
+  .catch((err) => {
     console.error('[prerender] FALLO — el sitio se sube SIN prerender esta vez (no bloquea el deploy):')
     console.error(err)
-    await writeDiagnostic('FALLO — sitio publicado sin prerender', err)
     // process.exit(0) (no 1) a proposito: si Chromium no puede correr en este
     // entorno (host compartido sin librerias del sistema, o se cuelga en el
     // primer arranque), preferimos deployar el dist/ normal de Vite antes que
