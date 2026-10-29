@@ -1,17 +1,52 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect, lazy, Suspense } from 'react'
+import { useEffect, lazy, Suspense, type ComponentType } from 'react'
 import { Navbar } from './components/Navbar'
 import { Footer } from './components/Footer'
 import { WhatsAppButton } from './components/WhatsAppButton'
 
-const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })))
-const Servicios = lazy(() => import('./pages/Servicios').then(m => ({ default: m.Servicios })))
-const PorQueNosotros = lazy(() => import('./pages/PorQueNosotros').then(m => ({ default: m.PorQueNosotros })))
-const Proceso = lazy(() => import('./pages/Proceso').then(m => ({ default: m.Proceso })))
-const Contacto = lazy(() => import('./pages/Contacto').then(m => ({ default: m.Contacto })))
-const AgendarCita = lazy(() => import('./pages/AgendarCita').then(m => ({ default: m.AgendarCita })))
-const Admin = lazy(() => import('./pages/Admin').then(m => ({ default: m.Admin })))
-const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })))
+const LOADERS: Record<string, () => Promise<ComponentType>> = {
+  '/': () => import('./pages/Home').then(m => m.Home),
+  '/servicios': () => import('./pages/Servicios').then(m => m.Servicios),
+  '/por-que-nosotros': () => import('./pages/PorQueNosotros').then(m => m.PorQueNosotros),
+  '/proceso': () => import('./pages/Proceso').then(m => m.Proceso),
+  '/contacto': () => import('./pages/Contacto').then(m => m.Contacto),
+  '/agendar-cita': () => import('./pages/AgendarCita').then(m => m.AgendarCita),
+  '/admin': () => import('./pages/Admin').then(m => m.Admin),
+  '*': () => import('./pages/NotFound').then(m => m.NotFound),
+}
+
+// La pagina de entrada se descarga ANTES de montar React (ver main.tsx) y se
+// renderiza directo, sin pasar por lazy/Suspense. Con lazy, el primer render
+// mostraba el fallback (null) y borraba el contenido prerenderizado hasta que
+// llegaba el chunk: el footer subia y bajaba y PageSpeed media CLS = 1.
+const preloaded: Record<string, ComponentType> = {}
+
+function routeKey(pathname: string) {
+  const p = pathname.toLowerCase().replace(/\/+$/, '') || '/'
+  return p in LOADERS ? p : '*'
+}
+
+export async function preloadRoute(pathname: string) {
+  const key = routeKey(pathname)
+  preloaded[key] = await LOADERS[key]()
+}
+
+function page(key: string) {
+  const Lazy = lazy(() => LOADERS[key]().then(C => ({ default: C })))
+  return function Page() {
+    const Preloaded = preloaded[key]
+    return Preloaded ? <Preloaded /> : <Lazy />
+  }
+}
+
+const Home = page('/')
+const Servicios = page('/servicios')
+const PorQueNosotros = page('/por-que-nosotros')
+const Proceso = page('/proceso')
+const Contacto = page('/contacto')
+const AgendarCita = page('/agendar-cita')
+const Admin = page('/admin')
+const NotFound = page('*')
 
 function ScrollToTop() {
   const { pathname } = useLocation()
