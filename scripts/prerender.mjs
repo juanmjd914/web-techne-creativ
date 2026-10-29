@@ -12,14 +12,48 @@
 import { spawn } from 'node:child_process'
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { createServer } from 'node:net'
+import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import puppeteer from 'puppeteer'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
 const distDir = join(root, 'dist')
 const viteBin = join(root, 'node_modules', 'vite', 'bin', 'vite.js')
+
+// Diagnostico TEMPORAL (2026-10-29, segunda vuelta): con el puerto ya
+// arreglado el prerender sigue fallando en Hostinger por otra causa. Solo si
+// FALLA deja dist/prerender-log.txt (publico, el repo es publico) con el
+// error y la salida de vite preview, sin variables de entorno y con las rutas
+// del servidor recortadas. Borrar apenas el prerender funcione en Hostinger.
+const previewLog = []
+
+function redact(text) {
+  return String(text)
+    .replaceAll(pathToFileURL(root).href, '<repo>')
+    .replaceAll(root, '<repo>')
+    .replaceAll(homedir(), '~')
+    .replace(/\/home\/[^/\s]+/g, '~')
+}
+
+function writeFailureLog(err) {
+  const lines = [
+    `estado: FALLO — sitio publicado sin prerender`,
+    `fecha: ${new Date().toISOString()}`,
+    `node: ${process.version}`,
+    '',
+    `error:\n${redact(err?.stack || err)}`,
+    '',
+    `vite preview (stderr):\n${redact(previewLog.join('').slice(-3000)) || '(vacio)'}`,
+  ]
+  try {
+    mkdirSync(distDir, { recursive: true })
+    writeFileSync(join(distDir, 'prerender-log.txt'), lines.join('\n') + '\n', 'utf-8')
+  } catch (e) {
+    console.error('[prerender] no se pudo escribir prerender-log.txt:', e)
+  }
+}
 
 // Puerto libre que asigna el sistema, no uno fijo. Con el 4610 fijo el
 // prerender fallaba en CADA build de Hostinger (diagnostico 2026-10-29:
@@ -101,7 +135,10 @@ async function prerender() {
     [viteBin, 'preview', '--port', String(port), '--strictPort', '--host', '127.0.0.1'],
     { cwd: root, stdio: 'pipe' },
   )
-  preview.stderr.on('data', (d) => process.stderr.write(`[vite preview] ${d}`))
+  preview.stderr.on('data', (d) => {
+    previewLog.push(String(d))
+    process.stderr.write(`[vite preview] ${d}`)
+  })
 
   let browser
   try {
@@ -188,6 +225,7 @@ withTimeout
   .catch((err) => {
     console.error('[prerender] FALLO — el sitio se sube SIN prerender esta vez (no bloquea el deploy):')
     console.error(err)
+    writeFailureLog(err)
     // process.exit(0) (no 1) a proposito: si Chromium no puede correr en este
     // entorno (host compartido sin librerias del sistema, o se cuelga en el
     // primer arranque), preferimos deployar el dist/ normal de Vite antes que
