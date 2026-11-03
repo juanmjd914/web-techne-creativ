@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Mail, Phone, MapPin, Instagram, Facebook } from 'lucide-react'
+import logoUrl from '../assets/logo.webp'
 
 const LINKS = [
   { to: '/', label: 'Inicio' },
@@ -16,7 +17,7 @@ export function Footer() {
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '64px 24px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 40 }}>
         {/* Brand */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <img src="/logo.webp" alt="Techne Creativ" width={400} height={120} style={{ height: 40, width: 'auto', alignSelf: 'flex-start' }} />
+          <img src={logoUrl} alt="Techne Creativ" width={400} height={120} style={{ height: 40, width: 'auto', alignSelf: 'flex-start' }} />
           <p style={{ fontSize: 13, lineHeight: 1.7, color: '#94A3B8' }}>
             Agencia de marketing digital y diseño web con sede en Rancagua, Chile. Potenciamos negocios con estrategia, diseño y tecnología.
           </p>
@@ -101,7 +102,7 @@ export function Footer() {
           © {new Date().getFullYear()} Techne Creativ — Todos los derechos reservados
         </p>
         <p style={{ fontSize: 12, color: '#94A3B8', margin: 0 }}>
-          Desarrollado por <a href="https://technecreativ.com" target="_blank" rel="noopener noreferrer" style={{ color: '#00BCD4', textDecoration: 'none' }}>Techne Creativ</a>
+          Desarrollado por <a href="https://technecreativ.com" target="_blank" rel="noopener noreferrer" style={{ color: '#00BCD4', textDecoration: 'underline' }}>Techne Creativ</a>
         </p>
       </div>
     </footer>

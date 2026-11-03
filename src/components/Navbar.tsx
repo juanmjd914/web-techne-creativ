@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
+import logoUrl from '../assets/logo.webp'
+import logoDarkUrl from '../assets/logo-dark.webp'
 
 const NAV = [
   { to: '/', label: 'Inicio' },
@@ -44,7 +46,7 @@ export function Navbar() {
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
           <img
-            src={solid ? '/logo-dark.webp' : '/logo.webp'}
+            src={solid ? logoDarkUrl : logoUrl}
             alt="Techne Creativ"
             width={solid ? 432 : 400}
             height={solid ? 72 : 120}
