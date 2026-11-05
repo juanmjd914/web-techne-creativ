@@ -89,6 +89,22 @@ if (process.env.NODE_ENV !== 'production') {
   })
 }
 
+// Enlaces cortos para la demo gratis (respuesta "DEMO" por Instagram):
+// abren WhatsApp del pais con el mensaje ya escrito. Instagram corta los
+// DM a 1000 caracteres y los wa.me con ?text= quedaban largos y feos.
+const DEMO_WHATSAPP_TEXT = encodeURIComponent('Hola, vengo de Instagram y quiero mi demo gratis. Mi negocio se llama: ')
+const DEMO_WHATSAPP: Record<string, string> = {
+  'demo-cl': '56965174454',
+  'demo-ve': '584246515707',
+}
+for (const [route, phone] of Object.entries(DEMO_WHATSAPP)) {
+  app.get(`/${route}`, (_req, res) => {
+    res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('X-Robots-Tag', 'noindex')
+    res.redirect(302, `https://wa.me/${phone}?text=${DEMO_WHATSAPP_TEXT}`)
+  })
+}
+
 // Serve frontend in production
 const dist = path.join(__dirname, '..', 'dist')
 
