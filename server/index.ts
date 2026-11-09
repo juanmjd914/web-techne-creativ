@@ -18,6 +18,35 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
 
 const app = express()
 
+// Una sola URL por pagina para Google (Search Console 2026-11-09: "Duplicada:
+// Google ha elegido una version canonica diferente a la del usuario").
+// www.technecreativ.com, /servicios/, /servicios.html, /SERVICIOS e
+// /index.html respondian 200 con el mismo contenido. Ahora redirigen 301 a
+// https://technecreativ.com/<ruta>. Solo GET/HEAD: un POST redirigido pierde
+// el cuerpo. La query (?utm_...) se conserva.
+const CANONICAL_HOST = 'technecreativ.com'
+// URLs del WordPress anterior que Google sigue citando como referencia.
+const LEGACY_REDIRECTS: Record<string, string> = {
+  '/services': '/servicios',
+  '/nosotros': '/por-que-nosotros',
+}
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next()
+  if (req.path.startsWith('/api/') || req.path.startsWith('/assets/')) return next()
+  const host = (req.headers.host || '').toLowerCase()
+  const isWww = host === `www.${CANONICAL_HOST}`
+  let p = req.path
+  if (p === '/index.html') p = '/'
+  else if (/^\/[a-z0-9-]+\.html$/i.test(p)) p = p.slice(0, -5)
+  if (p.length > 1) p = p.replace(/\/+$/, '')
+  if (!path.extname(p)) p = p.toLowerCase()
+  p = LEGACY_REDIRECTS[p] ?? p
+  if (!isWww && p === req.path) return next()
+  const query = req.originalUrl.slice(req.path.length)
+  const base = isWww ? `https://${CANONICAL_HOST}` : ''
+  res.redirect(301, `${base}${p}${query}`)
+})
+
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? true
