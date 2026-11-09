@@ -22,17 +22,22 @@
          Se precarga solo el subconjunto latin, que cubre todo el espanol. -->
     <link rel="preload" href="/src/assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Schema.org: Organization -->
+    <!-- Schema.org: Organization (la marca, ambos paises) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": "https://technecreativ.com/#organization",
       "name": "Techne Creativ",
       "url": "https://technecreativ.com",
       "logo": "https://technecreativ.com/logo.png",
       "description": "Agencia de marketing digital y diseño web con sede en Rancagua, Chile y Barquisimeto, Venezuela.",
       "email": "ventas@technecreativ.com",
       "telephone": "+56965174454",
+      "areaServed": [
+        { "@type": "Country", "name": "Chile" },
+        { "@type": "Country", "name": "Venezuela" }
+      ],
       "address": [
         {
           "@type": "PostalAddress",
@@ -58,6 +63,62 @@
         "contactType": "customer service",
         "availableLanguage": "Spanish"
       }
+    }
+    </script>
+
+    <!-- Schema.org: negocio local en Rancagua (mismos datos que la ficha de Google Maps) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "@id": "https://technecreativ.com/#rancagua",
+      "name": "Techne Creativ",
+      "url": "https://technecreativ.com",
+      "image": "https://technecreativ.com/og-image.jpg",
+      "logo": "https://technecreativ.com/logo.png",
+      "description": "Diseño de páginas web, landing pages, e-commerce y marketing digital para negocios en Rancagua y todo Chile.",
+      "telephone": "+56965174454",
+      "email": "ventas@technecreativ.com",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Pasaje Chorlo 01154",
+        "addressLocality": "Rancagua",
+        "addressRegion": "O'Higgins",
+        "postalCode": "2820000",
+        "addressCountry": "CL"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -34.1462966,
+        "longitude": -70.7663301
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "18:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "10:00",
+          "closes": "14:00"
+        }
+      ],
+      "hasMap": "https://www.google.com/maps?cid=18363398255770237241",
+      "areaServed": [
+        { "@type": "City", "name": "Rancagua" },
+        { "@type": "AdministrativeArea", "name": "Región de O'Higgins" },
+        { "@type": "Country", "name": "Chile" }
+      ],
+      "parentOrganization": { "@id": "https://technecreativ.com/#organization" },
+      "sameAs": [
+        "https://www.google.com/maps?cid=18363398255770237241",
+        "https://www.instagram.com/technecreativ",
+        "https://www.facebook.com/technecreativ"
+      ]
     }
     </script>
 
