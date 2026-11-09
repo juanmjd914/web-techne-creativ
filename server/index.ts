@@ -43,8 +43,10 @@ app.use((req, res, next) => {
   p = LEGACY_REDIRECTS[p] ?? p
   if (!isWww && p === req.path) return next()
   const query = req.originalUrl.slice(req.path.length)
-  const base = isWww ? `https://${CANONICAL_HOST}` : ''
-  res.redirect(301, `${base}${p}${query}`)
+  // Siempre absoluta y en nuestro dominio: con una ruta tipo "//otro.com/"
+  // un Location relativo "//otro.com" mandaria al visitante a otro sitio.
+  p = '/' + p.replace(/^[\/\\]+/, '')
+  res.redirect(301, `https://${CANONICAL_HOST}${p}${query}`)
 })
 
 app.use(cors({
